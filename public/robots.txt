@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /home.html
+Disallow: /app.html
+Disallow: /profile.html
+Disallow: /reset.html
+
+Sitemap: https://growmypin.in/sitemap.xml

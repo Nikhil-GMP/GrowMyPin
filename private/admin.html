@@ -1,0 +1,1571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GrowMyPin Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#09423D">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --deep: #09423D; --green: #0F9682; --green-t: #0B7A69; --bright: #34D6A8;
+    --grad: linear-gradient(135deg, #09423D 0%, #0F8A76 55%, #14B88F 100%);
+    --ink: #1F242B; --char: #24292F; --muted: #59606E; --line: #E4E6EE; --bg: #F5F4FA; --card: #FFFFFF;
+    --lav: #F1EEFB; --mint: #E6F6F0; --gold: #FFC75A; --mari: #F29A2E; --rose: #C02D52; --violet: #6B5BD6;
+    --fd: "Montserrat", system-ui, sans-serif; --fb: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--fb); font-size: 15px; line-height: 1.5; }
+  button, input, select, textarea { font: inherit; }
+  a { color: var(--green-t); }
+  :focus-visible { outline: 3px solid var(--green); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+
+  header { position: sticky; top: 0; z-index: 20; background: #FFFFFF; border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; gap: 14px; height: 64px; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--char); font-family: var(--fd); font-weight: 800; font-size: 1.15rem; letter-spacing: -.03em; }
+  .logo svg { width: 34px; height: 32px; }
+  .logo em { font-style: normal; font-family: var(--fb); font-weight: 700; font-size: .78rem; letter-spacing: 0; color: #fff; background: var(--char); border-radius: 999px; padding: 3px 9px; }
+  .grow { flex: 1; }
+  .who { font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid transparent; border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: .9rem; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s, background .2s; white-space: nowrap; }
+  .btn svg { width: 16px; height: 16px; flex: none; }
+  .btn-p { background: var(--grad); color: #fff; box-shadow: 0 10px 22px -12px rgba(9,66,61,.7); }
+  .btn-p:hover { transform: translateY(-1px); }
+  .btn-g { background: #fff; color: var(--char); border-color: var(--line); }
+  .btn-g:hover { border-color: var(--char); }
+  .btn-gold { background: linear-gradient(135deg, #FFE08A, var(--gold) 40%, var(--mari)); color: #2A1503; }
+  .btn-sm { padding: 6px 12px; font-size: .82rem; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  select.range { border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 12px; background: #fff; font-weight: 700; font-size: .88rem; color: var(--char); }
+
+  main { padding: 22px 0 60px; display: grid; gap: 18px; }
+  .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  h1 { margin: 0; font-family: var(--fd); font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -.03em; color: var(--char); }
+  h2 { margin: 0; font-family: var(--fd); font-size: 1.05rem; letter-spacing: -.02em; color: var(--char); }
+  .sub { color: var(--muted); font-size: .9rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 18px; min-width: 0; }
+  .card-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+
+  .kpis { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; }
+  .tabsbar { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin-top: -4px; overflow-x: auto; }
+  .tabsbar button { border: 0; background: none; font: inherit; font-weight: 700; color: var(--muted); padding: 10px 14px; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+  .tabsbar button.on { color: var(--char); border-bottom-color: var(--green); }
+  .tabsbar button[hidden] { display: none; }
+  .pane[hidden] { display: none !important; }
+  .set-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .fset { display: grid; gap: 12px; align-content: start; }
+  .fset .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fset label { display: grid; gap: 5px; font-weight: 700; font-size: .84rem; color: var(--char); }
+  .fset label small { font-weight: 500; color: var(--muted); }
+  .fset input[type=text], .fset input[type=number], .fset input[type=datetime-local], .fset input[type=email], .fset input[type=password], .fset input[type=tel] { border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; width: 100%; }
+  .fset input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px rgba(15,150,130,.15); }
+  .fset input:disabled { background: #F5F6F9; color: var(--muted); }
+  .sw { display: flex !important; grid-template-columns: none; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--bg); }
+  .sw input { appearance: none; -webkit-appearance: none; width: 44px; height: 26px; border-radius: 999px; background: #CBD0DB; position: relative; cursor: pointer; transition: background .2s; flex: none; margin: 0; }
+  .sw input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+  .sw input:checked { background: var(--green); }
+  .sw input:checked::after { transform: translateX(18px); }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .78rem; font-weight: 800; }
+  .pill.live { background: #E6F6F0; color: #0B7A69; } .pill.sched { background: #FFF1D6; color: #9A5A0B; } .pill.off { background: #EEF0F5; color: #59606E; }
+  .savebar { position: sticky; bottom: 12px; z-index: 5; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--char); color: #fff; border-radius: 18px; padding: 12px 14px; box-shadow: 0 20px 40px -20px rgba(0,0,0,.5); }
+  .savebar .sub { color: #B8BFCC; }
+  .hint { font-size: .8rem; color: var(--muted); }
+  .hint code { background: var(--lav); border-radius: 6px; padding: 1px 6px; font-size: .78rem; }
+  .adm-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid #F0F1F5; }
+  .adm-row b { display: block; color: var(--char); word-break: break-all; }
+  .b-hot { background: #FFE7D1; color: #A3480B; }
+  .kpi { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; display: grid; gap: 2px; position: relative; overflow: hidden; }
+  .kpi b { font-family: var(--fd); font-size: clamp(1.35rem, 2.4vw, 1.8rem); letter-spacing: -.03em; color: var(--char); line-height: 1.15; }
+  .kpi span { font-size: .8rem; color: var(--muted); font-weight: 600; }
+  .kpi small { font-size: .74rem; color: #8A90A0; }
+  .kpi.dark { background: var(--deep); border-color: var(--deep); }
+  .kpi.dark b, .kpi.dark span { color: #fff; }
+  .kpi.dark small { color: #9FD5C8; }
+  .kpi.warm { background: #FFF6E6; border-color: #F7DFB4; }
+
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 18px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+
+  .funnel { display: grid; gap: 10px; }
+  .fstep { display: grid; grid-template-columns: 130px 1fr 92px; align-items: center; gap: 10px; font-size: .88rem; }
+  .fstep .lab { font-weight: 700; color: var(--char); }
+  .fbar { height: 28px; border-radius: 8px; background: var(--lav); overflow: hidden; }
+  .fbar i { display: block; height: 100%; border-radius: 8px; background: var(--grad); width: 0; transition: width 1s cubic-bezier(.2,.8,.2,1); }
+  .fstep:nth-child(3) .fbar i { background: linear-gradient(135deg, #FFE08A, var(--gold) 40%, var(--mari)); }
+  .fstep:nth-child(4) .fbar i { background: var(--violet); }
+  .fstep .num { text-align: right; font-weight: 700; }
+  .fstep .num small { display: block; font-weight: 600; color: var(--muted); font-size: .74rem; }
+
+  .chart { width: 100%; height: auto; display: block; overflow: visible; }
+  .chart .gl { stroke: #EEF0F5; }
+  .chart text { font-family: var(--fb); font-size: 11px; fill: #8A90A0; }
+  .legend { display: flex; gap: 14px; font-size: .8rem; color: var(--muted); font-weight: 600; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+  .list { display: grid; gap: 8px; }
+  .li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; font-size: .86rem; }
+  .li .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .li .v { font-weight: 700; color: var(--char); }
+  .li .b { grid-column: 1 / -1; height: 5px; border-radius: 4px; background: var(--lav); overflow: hidden; }
+  .li .b i { display: block; height: 100%; background: var(--green); border-radius: 4px; }
+  .empty { color: var(--muted); font-size: .88rem; padding: 10px 0; }
+
+  .tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .search { border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 14px; min-width: 220px; background: #fff; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 5px 11px; font-size: .8rem; font-weight: 700; color: var(--muted); cursor: pointer; }
+  .chip.on { background: var(--char); color: #fff; border-color: var(--char); }
+  .chip .n { opacity: .7; margin-left: 4px; }
+
+  .tbl-wrap { overflow-x: auto; margin: 0 -18px; padding: 0 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: .86rem; min-width: 980px; }
+  th { text-align: left; font-size: .76rem; color: var(--muted); font-weight: 700; padding: 10px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; position: sticky; top: 0; background: #fff; }
+  td { padding: 11px 10px; border-bottom: 1px solid #F0F1F5; vertical-align: top; }
+  tr.row { cursor: pointer; transition: background .15s; }
+  tr.row:hover { background: #FAFAFD; }
+  td .nm { font-weight: 700; color: var(--char); }
+  td .em { color: var(--muted); font-size: .8rem; word-break: break-all; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+  .b-submitted { background: #E6F6F0; color: #0B7A69; }
+  .b-reserved { background: #FFF1D6; color: #9A5A0B; }
+  .b-regret { background: #FCE6EB; color: #A3243F; }
+  .b-pending { background: #EEF0F5; color: #59606E; }
+  .plat { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--lav); font-size: .75rem; font-weight: 700; margin: 0 4px 4px 0; color: var(--char); text-decoration: none; }
+  a.plat:hover { background: var(--lav); text-decoration: underline; }
+  .bell { color: var(--green); font-weight: 700; font-size: .78rem; }
+  .muted { color: var(--muted); }
+  .more { text-align: center; padding-top: 12px; }
+
+  /* drawer */
+  .shade { position: fixed; inset: 0; background: rgba(14,27,58,.35); z-index: 40; display: none; }
+  .shade.on { display: block; animation: fade .2s; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100%); background: #fff; z-index: 41; transform: translateX(105%); transition: transform .35s cubic-bezier(.2,.8,.2,1); display: grid; grid-template-rows: auto 1fr auto; box-shadow: -30px 0 60px -30px rgba(0,0,0,.35); }
+  .drawer.on { transform: none; }
+  .dr-h { padding: 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .dr-b { padding: 18px; overflow-y: auto; display: grid; gap: 14px; align-content: start; }
+  .dr-f { padding: 14px 18px; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+  .x { border: 0; background: var(--lav); width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; flex: none; }
+  dl { margin: 0; display: grid; grid-template-columns: 130px 1fr; gap: 8px 12px; font-size: .88rem; }
+  dt { color: var(--muted); font-weight: 600; }
+  dd { margin: 0; word-break: break-word; font-weight: 600; }
+  .sec-t { font-family: var(--fd); font-weight: 800; font-size: .95rem; color: var(--char); margin-top: 6px; }
+
+  /* composer */
+  .modal-bg { position: fixed; inset: 0; z-index: 60; background: rgba(14,27,58,.45); display: none; place-items: center; padding: 16px; overflow-y: auto; }
+  .modal-bg.on { display: grid; animation: fade .2s; }
+  .modal { width: min(820px, 100%); background: #fff; border-radius: 24px; padding: 22px; display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 22px; animation: pop .4s cubic-bezier(.2,1.2,.3,1); margin: auto; }
+  .modal h2 { font-size: 1.3rem; }
+  .form { display: grid; gap: 12px; align-content: start; }
+  .form label { display: grid; gap: 6px; font-weight: 700; font-size: .86rem; color: var(--char); }
+  .form input[type=text], .form textarea, .form select { border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 12px; background: #fff; width: 100%; }
+  .form textarea { min-height: 120px; resize: vertical; }
+  .form input:focus, .form textarea:focus, .form select:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px rgba(15,150,130,.15); }
+  .drop { border: 2px dashed var(--line); border-radius: 14px; padding: 14px; text-align: center; color: var(--muted); font-size: .86rem; cursor: pointer; position: relative; }
+  .drop:hover, .drop.over { border-color: var(--green); background: var(--mint); }
+  .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .imgrow { display: flex; gap: 10px; align-items: center; }
+  .imgrow img { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; }
+  .count { font-size: .76rem; color: var(--muted); text-align: right; font-weight: 500; }
+  .to-line { font-size: .9rem; background: var(--lav); border-radius: 12px; padding: 10px 12px; }
+  .to-line b { color: var(--char); }
+  .phone { border-radius: 30px; background: #111418; padding: 12px; display: grid; gap: 10px; align-content: start; min-height: 420px; }
+  .phone .bar { color: #9AA3B2; font-size: .72rem; display: flex; justify-content: space-between; padding: 2px 8px; }
+  .notif { background: rgba(255,255,255,.12); border-radius: 16px; padding: 10px 12px; color: #fff; display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; font-size: .8rem; }
+  .notif i { grid-row: span 2; width: 28px; height: 28px; border-radius: 8px; background: var(--grad); }
+  .notif b { font-size: .82rem; }
+  .notif span { color: #D7DCE4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .notif img { grid-column: 1 / -1; width: 100%; border-radius: 10px; max-height: 120px; object-fit: cover; margin-top: 4px; }
+  .pop-prev { background: #fff; border-radius: 18px; overflow: hidden; margin-top: 8px; }
+  .pop-prev img { width: 100%; max-height: 150px; object-fit: cover; display: block; }
+  .pop-prev div { padding: 10px 12px; font-size: .78rem; color: var(--ink); white-space: pre-wrap; word-break: break-word; max-height: 140px; overflow: hidden; }
+  .pop-prev b { display: block; font-family: var(--fd); font-size: .85rem; margin-bottom: 4px; }
+  .phone .cap { color: #9AA3B2; font-size: .7rem; text-align: center; }
+  .m-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; grid-column: 1 / -1; }
+  .msg-err { color: var(--rose); font-weight: 600; font-size: .86rem; min-height: 1.2em; grid-column: 1 / -1; }
+
+  .msgs { display: grid; gap: 10px; }
+  .msg { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid #F0F1F5; font-size: .86rem; }
+  .msg img, .msg .ph { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; background: var(--lav); }
+  .msg .who2 { font-weight: 700; color: var(--char); }
+  .msg .txt { color: var(--muted); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .msg .st { text-align: right; font-size: .76rem; white-space: nowrap; }
+
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 80; background: var(--char); color: #fff; padding: 12px 18px; border-radius: 14px; font-weight: 600; font-size: .9rem; box-shadow: 0 20px 40px -20px rgba(0,0,0,.6); display: none; max-width: calc(100% - 32px); }
+  .toast.on { display: block; animation: up .35s cubic-bezier(.2,.8,.2,1); }
+  .toast.err { background: var(--rose); }
+  .skel { background: linear-gradient(90deg, #EEF0F5 25%, #F7F8FB 50%, #EEF0F5 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; border-radius: 8px; color: transparent !important; }
+
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(20px) scale(.97); } }
+  @keyframes up { from { opacity: 0; transform: translate(-50%, 16px); } }
+  @keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+  /* growth graph tab */
+  .gr-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .gr-prev { position: sticky; top: 80px; display: grid; gap: 12px; }
+  .gr-prev .row4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .gr-prev select, .gr-prev input, .gr-sel { border: 1.5px solid var(--line); border-radius: 12px; padding: 9px 10px; background: #fff; width: 100%; font-weight: 600; }
+  .gr-rank { display: grid; gap: 8px; }
+  .gr-r { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); }
+  .gr-b { display: inline-flex; justify-content: center; border-radius: 999px; padding: 4px 8px; font-size: .74rem; font-weight: 800; color: #06231C; }
+  .gr-r b { font-family: var(--fd); font-size: .95rem; }
+  .gr-r small { display: block; color: var(--muted); font-size: .78rem; }
+  .gr-mv { display: flex; gap: 6px; }
+  .gr-mv button { width: 34px; height: 34px; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; display: grid; place-items: center; }
+  .gr-mv button:disabled { opacity: .35; cursor: default; }
+  .gr-mv svg { width: 16px; height: 16px; }
+  .gr-names { display: grid; gap: 8px; }
+  .gr-names .gn { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.6fr); gap: 8px; }
+  .gr-tbl { min-width: 820px; font-size: .84rem; }
+  .gr-tbl th, .gr-tbl td { padding: 6px 5px; vertical-align: middle; }
+  .gr-tbl td:first-child { min-width: 128px; }
+  .gr-tbl td:first-child small { display: block; color: var(--muted); font-size: .74rem; font-weight: 600; }
+  .gr-tbl input { width: 100%; min-width: 76px; border: 1.5px solid var(--line); border-radius: 9px; padding: 7px 6px; text-align: right; font-variant-numeric: tabular-nums; }
+  .gr-tbl input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(15,150,130,.15); }
+  .gr-tbl .tot { font-weight: 800; color: var(--char); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .gr-tbl tr.best td { background: #F1FBF7; }
+  .gr-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  #grTbl { min-width: 900px; }
+  #grTbl td input { width: 100%; min-width: 96px; padding: 8px 8px; text-align: right; font-variant-numeric: tabular-nums; }
+  #grTbl td:first-child { min-width: 120px; }
+  .gr-pct { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .gr-pct label { font-size: .76rem !important; }
+  .gr-add { display: flex; gap: 8px; }
+  .gr-add input { flex: 1; border: 1.5px solid var(--line); border-radius: 12px; padding: 8px 10px; min-width: 0; }
+  .chip.custom::after { content: " *"; color: var(--mari); }
+  @media (max-width: 1100px) { .gr-grid { grid-template-columns: 1fr; } .gr-prev { position: static; } }
+  @media (max-width: 560px) { .gr-prev .row4, .gr-pct { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gr-names .gn { grid-template-columns: 1fr; } .gr-r { grid-template-columns: 1fr auto; } .gr-r .gr-b { grid-column: 1 / -1; justify-self: start; } }
+  @media (max-width: 1100px) { .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } .set-grid { grid-template-columns: 1fr; } .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  /* real people vs bots */
+  .who-bar { display: flex; gap: 10px 16px; align-items: center; flex-wrap: wrap; }
+  .wb-seg { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: #fff; border: 1px solid var(--line); flex-wrap: wrap; }
+  .wb-seg button { border: 0; background: none; font: inherit; font-weight: 700; font-size: .86rem; color: var(--muted); padding: 7px 13px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+  .wb-seg button b { font-family: var(--fd); color: var(--char); }
+  .wb-seg button.on { background: var(--char); color: #fff; }
+  .wb-seg button.on b { color: #fff; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .d-real { background: #14B88F; } .d-bot { background: #E0405F; } .d-staff { background: #6B5BD6; }
+  #modeNote { flex: 1; min-width: 220px; font-size: .82rem; }
+  /* banners */
+  .bn-list { display: grid; gap: 12px; }
+  .bn-card { border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; gap: 10px; background: #FCFCFE; }
+  .bn-card.off { opacity: .6; }
+  .bn-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .bn-head b { font-family: var(--fd); }
+  .bn-head .sp { flex: 1; }
+  .bn-head button { border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 6px 10px; cursor: pointer; font-weight: 800; font-size: .8rem; color: var(--char); }
+  .bn-head button.del { color: var(--rose); }
+  .bn-head button:disabled { opacity: .4; cursor: default; }
+  .bn-sw { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; color: var(--muted); }
+  .bn-sw input { width: 18px; height: 18px; accent-color: var(--green); }
+  .fset select { border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; font: inherit; width: 100%; }
+  .bn-img { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: end; }
+  .bn-img img { width: 56px; height: 44px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); }
+  .bn-up { position: relative; overflow: hidden; }
+  .bn-up input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .sc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .sc-card { border: 1px solid var(--line); border-radius: 18px; padding: 10px; display: grid; gap: 8px; background: #FCFCFE; align-content: start; }
+  .sc-card .ph { position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: #EEF0F5; }
+  .sc-card .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sc-card .ph .bn-up { position: absolute; left: 8px; bottom: 8px; }
+  .sc-card label { font-size: .78rem !important; }
+  .sc-card .row3 { display: flex; gap: 6px; }
+  .sc-card .row3 button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 6px 4px; cursor: pointer; font-weight: 800; font-size: .76rem; color: var(--char); }
+  .sc-card .row3 button.del { color: var(--rose); }
+  .sc-card .row3 button:disabled { opacity: .4; cursor: default; }
+  .bn-prev { position: sticky; top: 74px; z-index: 4; background: var(--bg); padding: 4px 0 10px; }
+  /* plans + payments */
+  .pl-tbl { min-width: 640px; }
+  .pl-tbl td { vertical-align: middle; padding: 8px 6px; }
+  .pl-tbl input[type=text], .pl-tbl input[type=number] { border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 9px; width: 100%; background: #fff; font: inherit; }
+  .pl-tbl input:disabled { background: #F5F6F9; color: var(--muted); }
+  .pl-tbl .ck { width: 18px; height: 18px; accent-color: var(--green); }
+  .pl-per { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+  .lv-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; }
+  .lv-row button { border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 9px 11px; cursor: pointer; font-weight: 800; color: var(--rose); }
+  .pay-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .b-paid { background: #E6F6F0; color: #0B7A69; } .b-created { background: #EEF0F5; color: #59606E; } .b-test { background: #EEEAFD; color: #5B4BC4; }
+  .rzp-state { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  @media (max-width: 760px) { .pay-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } .modal { grid-template-columns: 1fr; } .phone { min-height: 0; } .who { display: none; } }
+  @media (max-width: 560px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid4 { grid-template-columns: 1fr; }
+    .fstep { grid-template-columns: 92px 1fr 72px; }
+    .search { min-width: 0; flex: 1; }
+    header .wrap { gap: 8px; }
+    .hide-sm { display: none; }
+    dl { grid-template-columns: 110px 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+<script src="/gmp-banners.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="GrowMyPin home">
+      <svg viewBox="0 0 136 128" aria-hidden="true"><defs><linearGradient id="ga" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#09423D"/><stop offset=".55" stop-color="#0F8A76"/><stop offset="1" stop-color="#14B88F"/></linearGradient></defs><path d="M134 0 L110 29 L66 29 C45 29 30 45 30 64 C30 84 44 100 60 105 L39 127 C16 121 0 95 0 64 C0 29 28 0 66 0 Z" fill="#24292F"/><path d="M75 50 L128 50 Q135 50 135 57 L135 120 Q135 127 128 127 L112 127 L112 96 L80 128 L48 128 L97 76 L51 76 Z" fill="url(#ga)"/></svg>
+      <span class="hide-sm">GrowMyPin</span><em>Admin</em>
+    </a>
+    <span class="grow"></span>
+    <span class="who" id="who"></span>
+    <select class="range" id="range" aria-label="Time range">
+      <option value="1">Today</option>
+      <option value="7">7 days</option>
+      <option value="30" selected>30 days</option>
+      <option value="90">90 days</option>
+      <option value="365">1 year</option>
+    </select>
+    <button class="btn btn-g btn-sm" type="button" id="logout">Log out</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="title-row">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="sub" id="updated">Loading</p>
+    </div>
+    <div class="tools">
+      <button class="btn btn-g" type="button" id="refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 4v7h-7"/></svg>Refresh</button>
+      <button class="btn btn-g" type="button" id="csv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>Download leads</button>
+      <button class="btn btn-p" type="button" id="msgAll" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Message everyone</button>
+    </div>
+  </div>
+
+  <nav class="tabsbar" id="tabsbar" aria-label="Admin sections">
+    <button type="button" class="on" data-tab="dash">Dashboard</button>
+    <button type="button" data-tab="growth">Growth graph</button>
+    <button type="button" data-tab="plans">Plans and payments</button>
+    <button type="button" data-tab="banners">Banners</button>
+    <button type="button" data-tab="settings">Settings</button>
+    <button type="button" data-tab="admins" hidden>Admins</button>
+  </nav>
+
+  <div class="pane" id="pane-dash" style="display:grid;gap:18px">
+  <section class="who-bar" aria-label="Who is visiting">
+    <div class="wb-seg" id="modeSeg" role="tablist" aria-label="Show visits from">
+      <button type="button" class="on" data-mode="real"><i class="dot d-real"></i>Real people <b id="cReal">-</b></button>
+      <button type="button" data-mode="bot"><i class="dot d-bot"></i>Bots <b id="cBot">-</b></button>
+      <button type="button" data-mode="staff"><i class="dot d-staff"></i>You and team <b id="cStaff">-</b></button>
+      <button type="button" data-mode="all">Everyone</button>
+    </div>
+    <p class="sub" id="modeNote">Real people = moved the mouse, scrolled, tapped or typed, with no robot signals. Bots and scanners never do that.</p>
+  </section>
+  <section class="kpis" id="kpis" aria-label="Key numbers">
+    <div class="kpi dark"><b id="kVisitors" class="skel">000</b><span>Visitors</span><small id="kViews">page views</small></div>
+    <div class="kpi"><b id="kSessions" class="skel">000</b><span>Visits</span><small>sessions</small></div>
+    <div class="kpi"><b id="kBounce" class="skel">00%</b><span>Bounce rate</span><small>left without doing anything</small></div>
+    <div class="kpi"><b id="kTime" class="skel">0m</b><span>Avg visit</span><small>time on site</small></div>
+    <div class="kpi"><b id="kSignups" class="skel">00</b><span>Sign ups</span><small id="kSignTotal">total</small></div>
+    <div class="kpi warm"><b id="kRes" class="skel">00</b><span>Slots reserved</span><small>forms submitted</small></div>
+    <div class="kpi warm"><b id="kHot" class="skel">00</b><span>Want more visits</span><small>clicked the visits button</small></div>
+    <div class="kpi"><b id="kPush" class="skel">00</b><span>Phones with alerts</span><small>can get your messages</small></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <div class="card-h"><h2>Visitors and sign ups per day</h2><div class="legend"><span><i style="background:#0F9682"></i>Visitors</span><span><i style="background:#F29A2E"></i>Sign ups</span></div></div>
+      <svg class="chart" id="daily" viewBox="0 0 720 240" role="img" aria-label="Visitors and sign ups per day"></svg>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>Funnel</h2><span class="sub">this period</span></div>
+      <div class="funnel" id="funnel"></div>
+      <p class="sub" style="margin-top:14px" id="funnelNote"></p>
+    </div>
+  </section>
+
+  <section class="grid4">
+    <div class="card"><div class="card-h"><h2>Top pages</h2></div><div class="list" id="lPages"></div></div>
+    <div class="card"><div class="card-h"><h2>Where visitors come from</h2></div><div class="list" id="lRefs"></div></div>
+    <div class="card"><div class="card-h"><h2>Devices</h2></div><div class="list" id="lDev"></div></div>
+    <div class="card"><div class="card-h"><h2>Countries</h2></div><div class="list" id="lCountry"></div></div>
+  </section>
+
+  <section class="card">
+    <div class="card-h">
+      <h2>People who signed up <span class="sub" id="peopleCount"></span></h2>
+      <div class="tools">
+        <input class="search" id="q" type="search" placeholder="Search name, email, phone, shop" aria-label="Search people">
+      </div>
+    </div>
+    <div class="chips" id="chips" style="margin-bottom:12px"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Person</th><th>Phone</th><th>Signed up</th><th>Diwali offer</th><th>Sells on</th><th>Goal</th><th>Pinterest</th><th>Alerts</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="more" id="more"></div>
+  </section>
+
+  <section class="card" id="msgCard" hidden>
+    <div class="card-h"><h2>Messages you sent</h2><span class="sub">last 150</span></div>
+    <div class="msgs" id="msgs"></div>
+  </section>
+  </div>
+
+  <div class="pane" id="pane-growth" hidden>
+    <p class="sub" id="grMeta" style="margin-bottom:12px"></p>
+    <div class="gr-grid">
+      <div style="display:grid;gap:18px">
+        <section class="card fset">
+          <div class="card-h" style="margin:0"><h2>Monthly Pinterest views per niche</h2></div>
+          <p class="hint">One estimate per niche: Pinterest views in each month for an account that starts at zero. A seller who already has views sees their current monthly views plus these numbers. Sellers never see the niche, these numbers or how the graph is made.</p>
+          <div class="tbl-wrap"><table class="gr-tbl" id="grTbl"></table></div>
+          <div class="gr-add"><input type="text" id="grNewNiche" maxlength="30" placeholder="New niche, for example Pet Products"><button class="btn btn-g btn-sm" type="button" id="grAddNiche">Add niche</button></div>
+          <p class="hint">"Other" is used for anyone who has not told us what they sell, so it cannot be removed.</p>
+        </section>
+
+        <section class="card fset">
+          <h2>Patience months</h2>
+          <p class="hint">How many first months show as Patience (orange) before Reward (green) on every graph.</p>
+          <label>Patience<select class="gr-sel" id="grPat"><option value="1">1 month</option><option value="2">2 months</option><option value="3">3 months</option></select></label>
+        </section>
+      </div>
+
+      <section class="card gr-prev">
+        <div class="card-h" style="margin:0"><h2>Live preview</h2><span class="sub">what a seller sees, before you save</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <select id="pvNiche" aria-label="Niche"></select>
+          <input type="number" id="pvCur" min="0" placeholder="Views now (empty = new account)" aria-label="Current monthly views">
+        </div>
+        <div id="pvBox"></div>
+      </section>
+    </div>
+    <div class="savebar" style="margin-top:18px">
+      <span class="sub" id="grMsg">Changes go live on every user's graph right after you save.</span>
+      <div class="tools"><button class="btn btn-g btn-sm" type="button" id="grReset">Reset to default numbers</button><button class="btn btn-gold" type="button" id="grSave">Save growth graph</button></div>
+    </div>
+  </div>
+
+  <div class="pane" id="pane-banners" hidden>
+    <div style="display:grid;gap:18px">
+      <section class="card fset">
+        <div class="card-h" style="margin:0"><h2>Landing page banners</h2><span class="pill off" id="bnPill">Off</span></div>
+        <p class="hint">Image banners like Flipkart / Amazon at the top of the landing page. Phone shows 1 banner at a time, computer shows 2 side by side. They swipe by themselves and people can swipe left and right. Tapping a banner opens its link. <b>Best image size: 1200 x 600 px (2 : 1)</b>, keep important text in the middle. No image? A colored text banner is shown instead. Shortcuts: <code>{offer}</code> offer name, <code>{percent}</code> discount.</p>
+        <div class="row2">
+          <label class="sw">Banners are on <input type="checkbox" id="bnOn"></label>
+          <label>Swipe every (seconds) <small>default 5</small><input type="number" id="bnIv" min="2" max="30" step="0.5" value="5"></label>
+        </div>
+        <div class="bn-prev"><div class="lbl" style="font-size:.76rem;font-weight:800;color:var(--muted);margin:0 0 6px">LIVE PREVIEW</div><div id="bnPreview"></div></div>
+      </section>
+      <section class="card fset">
+        <div class="card-h" style="margin:0"><h2>Banners</h2><button class="btn btn-g btn-sm" type="button" id="bnAdd">+ Add banner</button></div>
+        <div class="bn-list" id="bnList"></div>
+      </section>
+      <section class="card fset">
+        <div class="card-h" style="margin:0"><h2>Landing page pins (right side animation)</h2><button class="btn btn-g btn-sm" type="button" id="scAdd">+ Add pin</button></div>
+        <p class="hint">Real pin images in the moving board next to the headline, and in the "Draft &rarr; Approved" card. Use tall pin images (2 : 3, for example 1000 x 1500 px). <b>Pin title</b> is typed in the Draft card, <b>caption</b> shows under the pin, <b>tag</b> is the small label. Keep 6 or more for a full board.</p>
+        <div class="sc-list" id="scList"></div>
+      </section>
+      <div class="savebar">
+        <span class="sub" id="bnMsg" style="color:#D9DCE5">Changes go live for everyone right after you save.</span>
+        <div class="tools"><a class="btn btn-g btn-sm" href="/?landing=1" target="_blank" rel="noopener">Open landing page</a><button class="btn btn-g btn-sm" type="button" id="bnDefaults">Use default banners</button><button class="btn btn-gold" type="button" id="bnSave">Save banners</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane" id="pane-plans" hidden>
+    <div style="display:grid;gap:18px">
+      <section class="card fset">
+        <div class="card-h" style="margin:0"><h2>Payments (Razorpay)</h2><div class="rzp-state" id="rzpState"></div></div>
+        <div class="pay-kpis">
+          <div class="kpi dark"><b id="pkRev">-</b><span>Revenue</span><small>paid, live mode</small></div>
+          <div class="kpi"><b id="pkPaid">-</b><span>Paid orders</span><small id="pkPaidS">live mode</small></div>
+          <div class="kpi"><b id="pkActive">-</b><span>Active plans</span><small>right now</small></div>
+          <div class="kpi"><b id="pkOpen">-</b><span>Opened checkout</span><small>did not pay yet</small></div>
+        </div>
+        <div class="tbl-wrap"><table class="pl-tbl">
+          <thead><tr><th>Date</th><th>Person</th><th>Plan</th><th>Amount</th><th>Status</th><th>Paid with</th><th>Plan till</th><th>Razorpay ID</th></tr></thead>
+          <tbody id="payBody"><tr><td colspan="8" class="sub">Loading</td></tr></tbody>
+        </table></div>
+        <p class="hint">"Opened checkout" people are hot leads: they saw the price and opened Razorpay but did not finish. WhatsApp them.</p>
+      </section>
+
+      <form id="plForm" novalidate style="display:grid;gap:18px">
+        <section class="card fset">
+          <div class="card-h" style="margin:0"><h2>Plans</h2><span class="pill off" id="plPill">Off</span></div>
+          <p class="hint">Plans show only AFTER a person connects Pinterest (popup with their real numbers, then their 3 month growth, then these plans). Prices are in rupees. "Old price" is shown with a line through it (leave 0 for none).</p>
+          <label class="sw">Plans are on <input type="checkbox" id="plOn"></label>
+          <div class="tbl-wrap"><table class="pl-tbl">
+            <thead><tr><th>On</th><th>Plan name</th><th>Price</th><th>Old price</th><th>Tag on card</th><th>View levels</th><th>Highlight</th><th></th></tr></thead>
+            <tbody id="plRows"></tbody>
+          </table></div>
+          <div class="row2">
+            <label>Headline above the plans<input type="text" id="plHead" maxlength="90"></label>
+            <label>Line next to view levels<input type="text" id="plNote" maxlength="200"></label>
+          </div>
+        </section>
+        <section class="card fset">
+          <h2>View levels (charge per month for the views level the account is in)</h2>
+          <div id="lvRows" style="display:grid;gap:8px"></div>
+          <button class="btn btn-g btn-sm" type="button" id="lvAdd" style="justify-self:start">+ Add level</button>
+          <p class="hint">Example: 50,000 views and Rs 2,500 means a month with 50K+ views has a Rs 2,500 level charge. Shown on the plans so people know it before paying. Level charges are collected by you (Razorpay link) for now, not automatically.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn btn-g btn-sm" href="/home.html?plans=preview" target="_blank" rel="noopener">Preview the popup (as a user)</a>
+            <a class="btn btn-g btn-sm" href="/home.html?plans=preview&amp;open=1" target="_blank" rel="noopener">Preview plans only</a>
+          </div>
+        </section>
+        <div class="savebar">
+          <span class="sub" id="plMsg" style="color:#D9DCE5">Changes go live for everyone right after you save.</span>
+          <div class="tools"><button class="btn btn-g btn-sm" type="button" id="plDefaults">Use default plans</button><button class="btn btn-gold" type="submit" id="plSave">Save plans</button></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="pane" id="pane-settings" hidden>
+    <p class="sub" id="setMeta" style="margin-bottom:12px"></p>
+    <form id="setForm" novalidate style="display:grid;gap:18px">
+      <div class="set-grid">
+        <section class="card fset">
+          <div class="card-h" style="margin:0"><h2>Offer after sign up</h2><span class="pill off" id="offerPill">Off</span></div>
+          <label class="sw">Offer is on <input type="checkbox" name="offer_enabled"></label>
+          <div class="row2">
+            <label>Offer name<input type="text" name="offer_name" maxlength="40"></label>
+            <label>Discount %<input type="number" name="offer_percent" min="1" max="99"></label>
+          </div>
+          <div class="row2">
+            <label>Starts <small>India time</small><input type="datetime-local" name="offer_start"></label>
+            <label>Ends <small>India time</small><input type="datetime-local" name="offer_end"></label>
+          </div>
+          <label>Big headline<input type="text" name="offer_title" maxlength="120"></label>
+          <div class="row2">
+            <label>Line above %<input type="text" name="offer_before" maxlength="60"></label>
+            <label>Line below %<input type="text" name="offer_after" maxlength="80"></label>
+          </div>
+          <div class="row2">
+            <label>Yes button<input type="text" name="offer_reserve_btn" maxlength="30"></label>
+            <label>No button<input type="text" name="offer_regret_btn" maxlength="30"></label>
+          </div>
+          <label class="sw">Show the 5 diyas animation <input type="checkbox" name="offer_diyas"></label>
+          <a class="btn btn-g btn-sm" href="/signup.html#preview" target="_blank" rel="noopener" style="justify-self:start">Preview offer screen</a>
+        </section>
+
+        <div style="display:grid;gap:18px;align-content:start">
+          <section class="card fset">
+            <h2>Ribbon at the bottom of pages</h2>
+            <label class="sw">Ribbon is on <input type="checkbox" name="ribbon_enabled"></label>
+            <label>Ribbon text<input type="text" name="ribbon_text" maxlength="80"></label>
+            <label>Ribbon button<input type="text" name="ribbon_btn" maxlength="30"></label>
+            <p class="hint">Shows only while the offer is live, to visitors and people who have not reserved yet.</p>
+          </section>
+          <section class="card fset">
+            <h2>Banner on the user home page</h2>
+            <label class="sw">Banner is on <input type="checkbox" name="home_banner_enabled"></label>
+            <label>Banner text<input type="text" name="home_banner_text" maxlength="160"></label>
+          </section>
+        </div>
+
+        <section class="card fset">
+          <h2>"Your views can reach" popup</h2>
+          <label class="sw">Popup is on <input type="checkbox" name="popup_enabled"></label>
+          <label>Show after this many minutes on the site, once a day<input type="number" name="popup_minutes" min="0.5" max="120" step="0.5"></label>
+          <label>Popup title<input type="text" name="popup_title" maxlength="80"></label>
+          <div class="row2">
+            <label>Yes button<input type="text" name="popup_yes_btn" maxlength="40"></label>
+            <label>No button<input type="text" name="popup_no_btn" maxlength="40"></label>
+          </div>
+          <a class="btn btn-g btn-sm" href="/home.html?gmp_popup=1" target="_blank" rel="noopener" style="justify-self:start">Preview popup</a>
+        </section>
+
+        <section class="card fset">
+          <h2>Leads and Pinterest</h2>
+          <label>Your WhatsApp number for "Chat now" buttons <small>with country code, leave empty to hide</small><input type="tel" name="sales_whatsapp" placeholder="+91 98765 43210"></label>
+          <label class="sw">Show pins from a user's public Pinterest link (before they connect) <input type="checkbox" name="pins_from_profile_link"></label>
+          <p class="hint">Text shortcuts you can use: <code>{first}</code> first name, <code>{offer}</code> offer name, <code>{percent}</code> discount, <code>{store}</code> Etsy / Shopify / eBay (popup title only).</p>
+        </section>
+      </div>
+      <div class="savebar" id="saveBar">
+        <span class="sub" id="saveMsg">Changes go live for everyone right after you save.</span>
+        <div class="tools"><button class="btn btn-g btn-sm" type="button" id="setDefaults">Fill default texts</button><button class="btn btn-gold" type="submit" id="setSave">Save settings</button></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="pane" id="pane-admins" hidden>
+    <div class="grid2">
+      <section class="card">
+        <div class="card-h"><h2>Who can open /admin</h2></div>
+        <div id="admList"></div>
+      </section>
+      <section class="card fset">
+        <h2>Add an admin</h2>
+        <p class="hint">Admins can see the dashboard and people. Only you (the owner) can send messages, change settings and manage admins.</p>
+        <label>Email<input type="email" id="aEmail" placeholder="teammate@gmail.com"></label>
+        <label>Name or note <small>optional</small><input type="text" id="aNote" maxlength="80" placeholder="Rahul, sales"></label>
+        <label>Password for their login <small>8+ characters. Leave empty if they already have a GrowMyPin account</small><input type="password" id="aPass" autocomplete="new-password"></label>
+        <div class="msg-err" id="aErr" role="alert"></div>
+        <button class="btn btn-p" type="button" id="aAdd" style="justify-self:start">Add admin</button>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div class="shade" id="shade"></div>
+<aside class="drawer" id="drawer" aria-label="Person details">
+  <div class="dr-h"><div><h2 id="drName">Person</h2><div class="sub" id="drEmail"></div></div><button class="x" type="button" id="drClose" aria-label="Close">&times;</button></div>
+  <div class="dr-b" id="drBody"></div>
+  <div class="dr-f" id="drFoot"></div>
+</aside>
+
+<div class="modal-bg" id="composer" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="modal">
+    <div class="form">
+      <h2 id="cTitle">Send a message</h2>
+      <div class="to-line" id="cTo"></div>
+      <label>Title <span class="count">optional</span><input type="text" id="cHead" maxlength="80" placeholder="Message from GrowMyPin"></label>
+      <label>Message<textarea id="cText" maxlength="1500" placeholder="Hi! Your Diwali slot is ready. Reply on WhatsApp to start."></textarea><span class="count" id="cCount">0 / 1500</span></label>
+      <div class="drop" id="drop"><input type="file" id="cFile" accept="image/png,image/jpeg,image/webp,image/gif" aria-label="Add an image"><span id="dropTxt">Add an image (optional). Tap or drop a file here.</span></div>
+      <div class="imgrow" id="imgRow" hidden><img id="cThumb" alt=""><button class="btn btn-g btn-sm" type="button" id="cRemove">Remove image</button></div>
+    </div>
+    <div class="phone" aria-label="Preview on a phone">
+      <div class="bar"><span>9:41</span><span>Preview</span></div>
+      <div class="notif"><i></i><b id="pvT">Message from GrowMyPin</b><span id="pvB">Your text shows here</span><img id="pvImg" alt="" hidden></div>
+      <div class="cap">Tap the notification, and this opens:</div>
+      <div class="pop-prev"><img id="pvImg2" alt="" hidden><div><b id="pvT2">Message from GrowMyPin</b><span id="pvB2">Your text shows here</span></div></div>
+    </div>
+    <div class="msg-err" id="cErr" role="alert"></div>
+    <div class="m-actions"><button class="btn btn-g" type="button" id="cCancel">Cancel</button><button class="btn btn-p" type="button" id="cSend">Send now</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="/gmp-growth.js"></script>
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+  try { localStorage.setItem("gmp_staff", "1"); } catch (e) {} // your own visits never count as real people
+  var S = { mode: "real", data: null, days: 30, filter: "all", q: "", shown: 60, isSuper: false, composeTo: null, image: "" };
+  var STATUS = { submitted: "Form submitted", reserved: "Clicked reserve", regret: "I'll regret", pending: "Not answered" };
+  var PLAT = { etsy: "Etsy", ebay: "eBay", shopify: "Shopify" };
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]; }); }
+  function fmt(n) { n = Number(n) || 0; return n.toLocaleString("en-IN"); }
+  function short(n) { n = Number(n) || 0; if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M"; if (n >= 1e4) return Math.round(n / 1e3) + "K"; if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, "") + "K"; return String(Math.round(n)); }
+  function when(iso) {
+    if (!iso) return "";
+    var d = new Date(iso), s = (Date.now() - d.getTime()) / 1000;
+    if (s < 60) return "just now";
+    if (s < 3600) return Math.floor(s / 60) + " min ago";
+    if (s < 86400) return Math.floor(s / 3600) + " h ago";
+    if (s < 86400 * 7) return Math.floor(s / 86400) + " d ago";
+    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: s > 86400 * 300 ? "numeric" : undefined });
+  }
+  function full(iso) { return iso ? new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : ""; }
+  function toast(msg, err) {
+    var t = $("toast"); t.textContent = msg; t.className = "toast on" + (err ? " err" : "");
+    clearTimeout(t._t); t._t = setTimeout(function () { t.className = "toast"; }, err ? 6000 : 3500);
+  }
+  async function api(p, body) {
+    var o = { credentials: "same-origin", headers: {} };
+    if (body) { o.method = "POST"; o.headers["Content-Type"] = "application/json"; o.body = JSON.stringify(body); }
+    var r = await fetch(p, o);
+    var j = {}; try { j = await r.json(); } catch (e) {}
+    if (r.status === 404) { location.reload(); throw new Error("Not found"); }
+    if (!r.ok) throw new Error(j.error || ("Request failed (" + r.status + ")"));
+    return j;
+  }
+  function latest(u) { var r = u.slot_reservations || []; return r.length ? r.slice().sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; })[0] : null; }
+  function pushCount(u) { var p = u.push_subscriptions; return p && p[0] ? (p[0].count || 0) : 0; }
+  function pinsOf(u) { return u.pin_stats && u.pin_stats.pins != null ? u.pin_stats.pins : (u.pins_count == null ? null : u.pins_count); }
+  function waLink(phone) { var d = String(phone || "").replace(/\D/g, ""); return d ? "https://wa.me/" + d : ""; }
+
+  // ---------------- load ----------------
+  async function load() {
+    $("updated").textContent = "Loading";
+    try {
+      var d = await api("/api/admin/data?days=" + S.days + "&mode=" + S.mode);
+      S.data = d;
+      S.isSuper = !!(d.me && d.me.is_super);
+      $("who").textContent = d.me ? d.me.email : "";
+      $("msgAll").hidden = !S.isSuper;
+      document.querySelector('[data-tab="admins"]').hidden = !S.isSuper;
+      $("msgCard").hidden = !S.isSuper;
+      renderAll();
+      $("updated").textContent = "Updated " + new Date().toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" }) + ". Times in India time.";
+    } catch (e) {
+      $("updated").textContent = "Could not load: " + e.message;
+      toast("Could not load the dashboard: " + e.message, true);
+    }
+  }
+
+  function renderAll() {
+    var st = S.data.stats || {};
+    document.querySelectorAll(".skel").forEach(function (el) { el.classList.remove("skel"); });
+    var sp = st.split || null;
+    $("cReal").textContent = sp ? fmt(sp.real) : "?"; $("cBot").textContent = sp ? fmt(sp.bot) : "?"; $("cStaff").textContent = sp ? fmt(sp.staff) : "?";
+    $("modeNote").textContent = !sp ? "Run the v1.5 part of supabase.sql to split real people from bots. Showing everyone for now." :
+      ({ real: "Real people = moved the mouse, scrolled, tapped or typed, with no robot signals. Visits before 30 Oct 2026 had no such check, so they show under Bots.",
+         bot: "Crawlers, scanners and automated browsers, plus visitors who never moved, scrolled or tapped. Mostly US/EU servers.",
+         staff: "You and your admins (anyone who opened /admin on that browser or is logged in as admin).",
+         all: "Everything, including bots and your own visits." })[S.mode];
+    $("kVisitors").nextElementSibling.textContent = { real: "Real visitors", bot: "Bot visitors", staff: "Your visits", all: "All visitors" }[sp ? S.mode : "all"];
+    $("kVisitors").textContent = fmt(st.visitors);
+    $("kViews").textContent = fmt(st.pageviews) + " page views";
+    $("kSessions").textContent = fmt(st.sessions);
+    $("kBounce").textContent = st.sessions ? Math.round(100 * st.bounced / st.sessions) + "%" : "0%";
+    var sec = Number(st.avg_session_sec) || 0;
+    $("kTime").textContent = sec >= 60 ? Math.floor(sec / 60) + "m " + Math.round(sec % 60) + "s" : Math.round(sec) + "s";
+    $("kSignups").textContent = fmt(st.signups);
+    $("kSignTotal").textContent = fmt(st.signups_total) + " total";
+    $("kRes").textContent = fmt(st.reservations);
+    $("kPush").textContent = fmt(st.push_devices);
+    $("kHot").textContent = fmt(st.interested || 0);
+    renderDaily(st.daily || []);
+    renderFunnel(st);
+    renderList("lPages", (st.pages || []).map(function (p) { return { t: p.path, v: p.views }; }));
+    renderList("lRefs", (st.refs || []).map(function (p) { return { t: p.ref, v: p.visits }; }));
+    var dev = st.devices || {};
+    renderList("lDev", Object.keys(dev).map(function (k) { return { t: k.charAt(0).toUpperCase() + k.slice(1), v: dev[k] }; }).sort(function (a, b) { return b.v - a.v; }));
+    var cn = null; try { cn = new Intl.DisplayNames(["en"], { type: "region" }); } catch (e) {}
+    renderList("lCountry", (st.countries || []).map(function (c) { var n = c.country; try { if (cn && /^[A-Z]{2}$/.test(n)) n = cn.of(n); } catch (e) {} return { t: n === "??" ? "Unknown" : n, v: c.visitors }; }));
+    renderChips();
+    renderTable();
+    if (S.isSuper) renderMsgs();
+  }
+
+  function renderList(id, rows) {
+    var box = $(id);
+    if (!rows.length) { box.innerHTML = '<div class="empty">No data yet for this period.</div>'; return; }
+    var max = Math.max.apply(null, rows.map(function (r) { return r.v; })) || 1;
+    box.innerHTML = rows.slice(0, 8).map(function (r) {
+      return '<div class="li"><span class="t" title="' + esc(r.t) + '">' + esc(r.t) + '</span><span class="v">' + fmt(r.v) + '</span><span class="b"><i style="width:' + Math.max(3, 100 * r.v / max) + '%"></i></span></div>';
+    }).join("");
+  }
+
+  function renderFunnel(st) {
+    var o = st.offer || {};
+    var visitors = Number(st.visitors) || 0;
+    var signups = Number(st.signups) || 0;
+    var clicked = (Number(o.reserved) || 0) + (Number(o.submitted) || 0);
+    var submitted = Number(st.reservations) || 0;
+    var steps = [["Visitors", visitors], ["Signed up", signups], ["Clicked reserve", clicked], ["Submitted form", submitted]];
+    var top = Math.max(visitors, signups, 1);
+    $("funnel").innerHTML = steps.map(function (s, i) {
+      var prev = i ? steps[i - 1][1] : 0;
+      var pct = i && prev ? Math.round(100 * s[1] / prev) + "% of previous" : "";
+      return '<div class="fstep"><span class="lab">' + s[0] + '</span><span class="fbar"><i data-w="' + Math.max(s[1] ? 2 : 0, 100 * s[1] / top) + '"></i></span><span class="num">' + fmt(s[1]) + '<small>' + pct + '</small></span></div>';
+    }).join("");
+    requestAnimationFrame(function () { document.querySelectorAll(".fbar i").forEach(function (i) { i.style.width = i.getAttribute("data-w") + "%"; }); });
+    var regret = Number(o.regret) || 0;
+    $("funnelNote").textContent = signups ? (regret + " people chose \"I'll regret\". " + (visitors ? "Visitor to sign up: " + (Math.round(1000 * signups / visitors) / 10) + "%." : "")) : "Sign ups show here as they come in.";
+  }
+
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, a, p) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+
+  function renderDaily(rows) {
+    var svg = $("daily"); svg.innerHTML = "";
+    var W = 720, H = 240, L = 40, R = 40, T = 12, B = 28;
+    // fill missing days
+    var days = Math.min(S.days, 90), map = {};
+    rows.forEach(function (r) { map[r.day] = r; });
+    var list = [];
+    for (var i = days - 1; i >= 0; i--) {
+      var d = new Date(Date.now() + 5.5 * 3600000 - i * 86400000).toISOString().slice(0, 10);
+      list.push(map[d] || { day: d, visitors: 0, views: 0, signups: 0 });
+    }
+    if (S.days > 90) list = rows.length ? rows : list;
+    var n = list.length;
+    var maxV = Math.max(1, Math.max.apply(null, list.map(function (r) { return r.visitors; })));
+    var maxS = Math.max(1, Math.max.apply(null, list.map(function (r) { return r.signups; })));
+    var x = function (i) { return L + (W - L - R) * (n === 1 ? .5 : i / (n - 1)); };
+    var yV = function (v) { return T + (H - T - B) * (1 - v / (maxV * 1.1)); };
+    var yS = function (v) { return T + (H - T - B) * (1 - v / (maxS * 1.1)); };
+    for (var g = 0; g <= 3; g++) {
+      var gy = T + (H - T - B) * g / 3;
+      el("line", { "class": "gl", x1: L, x2: W - R, y1: gy, y2: gy }, svg);
+      var t1 = el("text", { x: L - 6, y: gy + 4, "text-anchor": "end" }, svg); t1.textContent = short(maxV * 1.1 * (1 - g / 3));
+      var t2 = el("text", { x: W - R + 6, y: gy + 4, fill: "#B4601A" }, svg); t2.textContent = short(maxS * 1.1 * (1 - g / 3));
+    }
+    var bw = Math.max(2, Math.min(18, (W - L - R) / n * .5));
+    list.forEach(function (r, i) {
+      if (!r.signups) return;
+      var h = (H - B) - yS(r.signups);
+      var rect = el("rect", { x: x(i) - bw / 2, y: H - B, width: bw, height: 0, rx: 3, fill: "#F29A2E", opacity: ".85" }, svg);
+      var tt = el("title", {}, rect); tt.textContent = r.day + ": " + r.signups + " sign ups";
+      setTimeout(function () { rect.style.transition = "all .6s cubic-bezier(.2,.8,.2,1)"; rect.setAttribute("y", yS(r.signups)); rect.setAttribute("height", h); }, 50 + i * 8);
+    });
+    var pts = list.map(function (r, i) { return x(i).toFixed(1) + "," + yV(r.visitors).toFixed(1); });
+    var area = el("path", { d: "M" + x(0) + "," + (H - B) + " L" + pts.join(" L") + " L" + x(n - 1) + "," + (H - B) + " Z", fill: "rgba(15,150,130,.12)" }, svg);
+    var line = el("path", { d: "M" + pts.join(" L"), fill: "none", stroke: "#0F9682", "stroke-width": 2.5, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    var len = line.getTotalLength ? line.getTotalLength() : 0;
+    if (len) { line.style.strokeDasharray = len; line.style.strokeDashoffset = len; requestAnimationFrame(function () { line.style.transition = "stroke-dashoffset 1.2s ease"; line.style.strokeDashoffset = 0; }); }
+    list.forEach(function (r, i) {
+      var hit = el("rect", { x: x(i) - (W - L - R) / n / 2, y: T, width: (W - L - R) / n, height: H - T - B, fill: "transparent" }, svg);
+      var tt = el("title", {}, hit); tt.textContent = r.day + ": " + r.visitors + " visitors, " + r.views + " page views, " + r.signups + " sign ups";
+    });
+    var step = Math.ceil(n / 7);
+    list.forEach(function (r, i) {
+      if (i % step && i !== n - 1) return;
+      var t = el("text", { x: x(i), y: H - 8, "text-anchor": "middle" }, svg);
+      t.textContent = new Date(r.day + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    });
+  }
+
+  // ---------------- people ----------------
+  function people() {
+    var all = (S.data && S.data.users) || [];
+    var q = S.q.toLowerCase();
+    return all.filter(function (u) {
+      if (S.filter === "hot") { if (!u.interest_at) return false; }
+      else if (S.filter !== "all" && (u.offer_status || "pending") !== S.filter) return false;
+      if (!q) return true;
+      var r = latest(u);
+      var hay = [u.name, u.email, u.phone, r && r.phone, r && JSON.stringify(r.links), r && r.pinterest_url].join(" ").toLowerCase();
+      return hay.indexOf(q) > -1;
+    });
+  }
+  function renderChips() {
+    var all = (S.data && S.data.users) || [];
+    var c = { all: all.length, submitted: 0, reserved: 0, regret: 0, pending: 0, hot: 0 };
+    all.forEach(function (u) { c[u.offer_status || "pending"] = (c[u.offer_status || "pending"] || 0) + 1; if (u.interest_at) c.hot++; });
+    var defs = [["all", "Everyone"], ["hot", "Want more visits"], ["submitted", "Form submitted"], ["reserved", "Clicked reserve"], ["regret", "I'll regret"], ["pending", "Not answered"]];
+    $("chips").innerHTML = defs.map(function (d) {
+      return '<button type="button" class="chip' + (S.filter === d[0] ? " on" : "") + '" data-f="' + d[0] + '">' + d[1] + '<span class="n">' + (c[d[0]] || 0) + '</span></button>';
+    }).join("");
+  }
+  $("chips").addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
+    S.filter = b.getAttribute("data-f"); S.shown = 60; renderChips(); renderTable();
+  });
+  var qT = null;
+  $("q").addEventListener("input", function () { var v = this.value; clearTimeout(qT); qT = setTimeout(function () { S.q = v.trim(); S.shown = 60; renderTable(); }, 150); });
+
+  function renderTable() {
+    var list = people();
+    $("peopleCount").textContent = "(" + list.length + ")";
+    var rows = list.slice(0, S.shown).map(function (u) {
+      var r = latest(u);
+      var st = u.offer_status || "pending";
+      var phone = (r && r.phone) || u.phone || "";
+      if (!r && u.platforms && u.platforms.length) r = { platforms: u.platforms, links: u.shop_links || {}, pinterest_url: u.pinterest_url, has_pinterest: u.pinterest_url ? true : null };
+      var plats = r && r.platforms && r.platforms.length ? r.platforms.map(function (p) {
+        var link = r.links && r.links[p];
+        return link ? '<a class="plat" href="' + esc(link) + '" target="_blank" rel="noopener noreferrer">' + esc(PLAT[p] || p) + '</a>' : '<span class="plat">' + esc(PLAT[p] || p) + '</span>';
+      }).join("") : '<span class="muted">-</span>';
+      var goal = r && r.target_sales ? '<b>' + fmt(r.target_sales) + '</b>/mo in ' + r.wait_months + ' mo' : '<span class="muted">-</span>';
+      var pin = r ? (r.has_pinterest ? (r.pinterest_url ? '<a href="' + esc(r.pinterest_url) + '" target="_blank" rel="noopener noreferrer">Yes, open</a>' : "Yes") : (r.has_pinterest === false ? "No" : '<span class="muted">-</span>')) : '<span class="muted">-</span>';
+      var pc = pushCount(u);
+      return '<tr class="row" data-id="' + esc(u.id) + '">' +
+        '<td><div class="nm">' + esc(u.name || "No name") + '</div><div class="em">' + esc(u.email) + '</div></td>' +
+        '<td>' + (phone ? '<a href="' + waLink(phone) + '" target="_blank" rel="noopener noreferrer" title="Open WhatsApp chat">' + esc(phone) + '</a>' : '<span class="muted">-</span>') + '</td>' +
+        '<td title="' + esc(full(u.created_at)) + '">' + esc(when(u.created_at)) + '</td>' +
+        '<td><span class="badge b-' + st + '">' + STATUS[st] + '</span>' + (u.interest_at ? '<br><span class="badge b-hot" style="margin-top:4px" title="' + esc(full(u.interest_at)) + '">Wants more visits</span>' : '') + '</td>' +
+        '<td>' + plats + (u.niche ? '<div class="em">' + esc(u.niche) + (pinsOf(u) != null ? ', ' + fmt(pinsOf(u)) + ' pins' : '') + '</div>' : '') + '</td>' +
+        '<td>' + goal + '</td>' +
+        '<td>' + pin + '</td>' +
+        '<td>' + (pc ? '<span class="bell">On (' + pc + ')</span>' : '<span class="muted">Off</span>') + '</td>' +
+        '<td>' + (S.isSuper ? '<button class="btn btn-g btn-sm" type="button" data-msg="' + esc(u.id) + '">Message</button>' : '') + '</td>' +
+        '</tr>';
+    });
+    $("tbody").innerHTML = rows.length ? rows.join("") : '<tr><td colspan="9" class="empty">' + ((S.data && S.data.users || []).length ? "Nobody matches this search." : "No sign ups yet. Share your Connect Pinterest link to get the first one.") + '</td></tr>';
+    $("more").innerHTML = list.length > S.shown ? '<button class="btn btn-g" type="button" id="showMore">Show ' + Math.min(60, list.length - S.shown) + ' more</button>' : "";
+    var sm = $("showMore"); if (sm) sm.onclick = function () { S.shown += 60; renderTable(); };
+  }
+  $("tbody").addEventListener("click", function (e) {
+    var m = e.target.closest("[data-msg]");
+    if (m) { e.stopPropagation(); openComposer(m.getAttribute("data-msg")); return; }
+    if (e.target.closest("a")) return;
+    var tr = e.target.closest("tr.row");
+    if (tr) openDrawer(tr.getAttribute("data-id"));
+  });
+
+  function findUser(id) { return ((S.data && S.data.users) || []).filter(function (u) { return u.id === id; })[0]; }
+
+  // ---------------- drawer ----------------
+  function openDrawer(id) {
+    var u = findUser(id); if (!u) return;
+    $("drName").textContent = u.name || "No name";
+    $("drEmail").textContent = u.email;
+    var st = u.offer_status || "pending";
+    var h = '<dl>' +
+      '<dt>Phone</dt><dd>' + (u.phone ? '<a href="' + waLink(u.phone) + '" target="_blank" rel="noopener noreferrer">' + esc(u.phone) + '</a>' : "-") + '</dd>' +
+      '<dt>Signed up</dt><dd>' + esc(full(u.created_at)) + '</dd>' +
+      '<dt>Last seen</dt><dd>' + esc(u.last_seen_at ? full(u.last_seen_at) : "-") + '</dd>' +
+      '<dt>Diwali offer</dt><dd><span class="badge b-' + st + '">' + STATUS[st] + '</span>' + (u.offer_at ? ' <span class="muted">' + esc(when(u.offer_at)) + '</span>' : "") + '</dd>' +
+      '<dt>Came from</dt><dd>' + esc(u.ref || "Direct") + '</dd>' +
+      '<dt>Sells (niche)</dt><dd>' + esc(u.niche || "-") + '</dd>' +
+      '<dt>Pins on Pinterest</dt><dd>' + (pinsOf(u) != null ? fmt(pinsOf(u)) + (u.pin_stats && u.pin_stats.pins != null ? " (live)" : " (they told us)") : "-") + (u.pin_stats && u.pin_stats.views30 != null ? ', ' + fmt(u.pin_stats.views30) + ' views in 30 days' : '') + '</dd>' +
+      '<dt>Wants more visits</dt><dd>' + (u.interest_at ? '<span class="badge b-hot">Yes</span> <span class="muted">' + esc(when(u.interest_at)) + ', ' + (u.interest_count || 1) + ' time(s), from ' + esc(u.interest_source || "-") + '</span>' : "No") + '</dd>' +
+      (u.shop_links && Object.keys(u.shop_links).length ? '<dt>Store links</dt><dd>' + Object.keys(u.shop_links).map(function (p) { return '<a href="' + esc(u.shop_links[p]) + '" target="_blank" rel="noopener noreferrer">' + esc(PLAT[p] || p) + '</a>'; }).join(", ") + '</dd>' : '') +
+      '<dt>Alerts</dt><dd>' + (pushCount(u) ? "On, " + pushCount(u) + " device(s)" : "Off") + '</dd>' +
+      '</dl>';
+    var res = (u.slot_reservations || []).slice().sort(function (a, b) { return a.created_at < b.created_at ? 1 : -1; });
+    if (res.length) {
+      res.forEach(function (r, i) {
+        h += '<div class="sec-t">' + (i ? "Earlier form" : "Reserve my slot form") + ' <span class="muted" style="font-weight:600;font-family:var(--fb)">' + esc(full(r.created_at)) + '</span></div><dl>' +
+          '<dt>Sells on</dt><dd>' + (r.platforms || []).map(function (p) { return esc(PLAT[p] || p); }).join(", ") + '</dd>' +
+          Object.keys(r.links || {}).map(function (p) { return '<dt>' + esc(PLAT[p] || p) + ' link</dt><dd><a href="' + esc(r.links[p]) + '" target="_blank" rel="noopener noreferrer">' + esc(r.links[p]) + '</a></dd>'; }).join("") +
+          '<dt>Sales goal</dt><dd>' + fmt(r.target_sales) + ' a month</dd>' +
+          '<dt>Can wait</dt><dd>' + r.wait_months + ' month' + (r.wait_months > 1 ? "s" : "") + '</dd>' +
+          '<dt>Pinterest</dt><dd>' + (r.has_pinterest ? "Yes" + (r.pinterest_url ? ', <a href="' + esc(r.pinterest_url) + '" target="_blank" rel="noopener noreferrer">' + esc(r.pinterest_url) + '</a>' : " (no link)") : (r.has_pinterest === false ? "No" : "-")) + '</dd>' +
+          '<dt>Phone on form</dt><dd>' + esc(r.phone) + '</dd>' +
+          '</dl>';
+      });
+    } else {
+      h += '<p class="empty">This person has not filled the Reserve my slot form.</p>';
+    }
+    if (S.isSuper && S.data.messages) {
+      var mine = S.data.messages.filter(function (m) { return m.user_id === id; });
+      if (mine.length) {
+        h += '<div class="sec-t">Messages</div><div class="msgs">' + mine.map(msgRow).join("") + '</div>';
+      }
+    }
+    $("drBody").innerHTML = h;
+    var foot = "";
+    if (u.phone) foot += '<a class="btn btn-g" href="' + waLink(u.phone) + '" target="_blank" rel="noopener noreferrer">WhatsApp</a>';
+    foot += '<a class="btn btn-g" href="mailto:' + esc(u.email) + '">Email</a>';
+    if (S.isSuper) foot += '<button class="btn btn-p" type="button" id="drMsg">Send message</button>';
+    $("drFoot").innerHTML = foot;
+    var dm = $("drMsg"); if (dm) dm.onclick = function () { openComposer(id); };
+    $("shade").classList.add("on"); $("drawer").classList.add("on");
+    setTimeout(function () { $("drClose").focus(); }, 50);
+  }
+  function closeDrawer() { $("shade").classList.remove("on"); $("drawer").classList.remove("on"); }
+  $("drClose").onclick = closeDrawer;
+  $("shade").onclick = closeDrawer;
+
+  // ---------------- messages list ----------------
+  function msgRow(m) {
+    var p = m.profiles || {};
+    return '<div class="msg">' + (m.image_url ? '<img src="' + esc(m.image_url) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
+      '<div><div class="who2">' + esc(p.name || p.email || "Someone") + '</div><div class="txt">' + esc(m.body || "(image only)") + '</div></div>' +
+      '<div class="st">' + (m.seen_at ? '<span class="badge b-submitted">Seen</span>' : '<span class="badge b-pending">Not seen yet</span>') + '<br><span class="muted">' + esc(when(m.created_at)) + '</span>' + (m.push_ok ? '<br><span class="bell">Notified</span>' : '') + '</div></div>';
+  }
+  function renderMsgs() {
+    var list = S.data.messages || [];
+    $("msgs").innerHTML = list.length ? list.slice(0, 60).map(msgRow).join("") : '<div class="empty">No messages yet. Use Message on a person, or Message everyone.</div>';
+  }
+
+  // ---------------- composer (super admin only) ----------------
+  function openComposer(to) {
+    if (!S.isSuper) return;
+    S.composeTo = to;
+    var u = to === "all" ? null : findUser(to);
+    var everyone = (S.data.users || []).length;
+    $("cTo").innerHTML = to === "all"
+      ? 'To <b>everyone</b> who signed up (' + fmt(everyone) + ' people, ' + fmt(S.data.stats.push_devices || 0) + ' phones with alerts on)'
+      : 'To <b>' + esc(u ? (u.name || u.email) : "this person") + '</b>' + (u ? ' <span class="muted">' + esc(u.email) + '</span>' + (pushCount(u) ? ' - alerts on' : ' - alerts off, they see it next time they open the site') : '');
+    $("cErr").textContent = "";
+    closeDrawer();
+    $("composer").classList.add("on");
+    setTimeout(function () { $("cText").focus(); }, 60);
+    preview();
+  }
+  function closeComposer() { $("composer").classList.remove("on"); }
+  $("cCancel").onclick = closeComposer;
+  $("composer").addEventListener("click", function (e) { if (e.target === this) closeComposer(); });
+  $("msgAll").onclick = function () { openComposer("all"); };
+
+  function preview() {
+    var t = $("cHead").value.trim() || "Message from GrowMyPin";
+    var b = $("cText").value.trim();
+    $("pvT").textContent = t; $("pvT2").textContent = t;
+    $("pvB").textContent = b || (S.image ? "Sent you a new image. Tap to open." : "Your text shows here");
+    $("pvB2").textContent = b || "";
+    $("cCount").textContent = $("cText").value.length + " / 1500";
+    ["pvImg", "pvImg2"].forEach(function (id) { var im = $(id); if (S.image) { im.src = S.image; im.hidden = false; } else { im.hidden = true; im.removeAttribute("src"); } });
+  }
+  $("cHead").addEventListener("input", preview);
+  $("cText").addEventListener("input", preview);
+
+  function readImage(file) {
+    if (!file) return;
+    if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) { $("cErr").textContent = "Use a PNG, JPG, WEBP or GIF image."; return; }
+    var fr = new FileReader();
+    fr.onload = function () {
+      if (file.type === "image/gif") { // keep animation
+        if (file.size > 2.5 * 1024 * 1024) { $("cErr").textContent = "GIF is too big. Keep it under 2.5 MB."; return; }
+        setImage(fr.result); return;
+      }
+      var img = new Image();
+      img.onload = function () {
+        var max = 1280, w = img.width, h = img.height, k = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        var ctx = c.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+        setImage(c.toDataURL("image/jpeg", .86));
+      };
+      img.onerror = function () { $("cErr").textContent = "Could not read this image."; };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+  function setImage(dataUrl) {
+    S.image = dataUrl || "";
+    $("imgRow").hidden = !S.image;
+    if (S.image) $("cThumb").src = S.image;
+    $("dropTxt").textContent = S.image ? "Change image" : "Add an image (optional). Tap or drop a file here.";
+    $("cErr").textContent = "";
+    preview();
+  }
+  $("cFile").addEventListener("change", function () { readImage(this.files[0]); this.value = ""; });
+  $("cRemove").onclick = function () { setImage(""); };
+  var drop = $("drop");
+  ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); }); });
+  ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function () { drop.classList.remove("over"); }); });
+  drop.addEventListener("drop", function (e) { e.preventDefault(); readImage(e.dataTransfer.files[0]); });
+
+  $("cSend").onclick = async function () {
+    var text = $("cText").value.trim();
+    if (!text && !S.image) { $("cErr").textContent = "Write a message or add an image."; return; }
+    if (S.composeTo === "all" && !confirm("Send this to everyone who signed up?")) return;
+    var btn = this; btn.disabled = true; btn.textContent = "Sending";
+    try {
+      var r = await api("/api/admin/message", { to: S.composeTo, title: $("cHead").value.trim(), text: text, image: S.image || undefined });
+      closeComposer();
+      $("cText").value = ""; $("cHead").value = ""; setImage("");
+      toast("Sent to " + r.people + (r.people === 1 ? " person" : " people") + ". Phone alerts delivered: " + r.pushed + (r.devices ? " of " + r.devices : "") + ". Everyone else sees it next time they open the site.");
+      load();
+    } catch (e) {
+      $("cErr").textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "Send now";
+    }
+  };
+
+  // ---------------- csv ----------------
+  $("csv").onclick = function () {
+    var list = people();
+    var head = ["name", "email", "phone", "signed_up", "offer_status", "sells_on", "etsy", "shopify", "ebay", "sales_goal", "wait_months", "has_pinterest", "pinterest_url", "alerts_on", "came_from", "niche", "pins"];
+    var lines = [head.join(",")];
+    list.forEach(function (u) {
+      var r = latest(u) || {};
+      var l = r.links || {};
+      var row = [u.name, u.email, r.phone || u.phone, u.created_at, u.offer_status, (r.platforms || []).join(" "), l.etsy, l.shopify, l.ebay, r.target_sales, r.wait_months, r.has_pinterest == null ? "" : (r.has_pinterest ? "yes" : "no"), r.pinterest_url, pushCount(u) ? "yes" : "no", u.ref, u.niche || "", pinsOf(u)];
+      lines.push(row.map(function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(","));
+    });
+    var blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "growmypin-leads-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  };
+
+
+  // ---------------- tabs ----------------
+  function showTab(t) {
+    Array.prototype.forEach.call(document.querySelectorAll("#tabsbar button"), function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === t); });
+    ["dash", "growth", "plans", "banners", "settings", "admins"].forEach(function (k) { $("pane-" + k).hidden = k !== t; });
+    document.querySelector(".title-row h1").textContent = { dash: "Dashboard", growth: "Growth graph", plans: "Plans and payments", banners: "Banners", settings: "Settings", admins: "Admins" }[t];
+    $("updated").style.display = t === "dash" ? "" : "none";
+    document.querySelector(".title-row .tools").style.display = t === "dash" ? "" : "none";
+    $("range").style.display = t === "dash" ? "" : "none";
+    if (t === "settings") loadSettings();
+    if (t === "growth") loadGrowth();
+    if (t === "admins") loadAdmins();
+    if (t === "plans") loadPlans();
+    if (t === "banners") loadBanners();
+    try { history.replaceState(null, "", "#" + t); } catch (e) {}
+  }
+  $("tabsbar").addEventListener("click", function (e) { var b = e.target.closest("button[data-tab]"); if (b) showTab(b.getAttribute("data-tab")); });
+
+  // ---------------- settings ----------------
+  var SETS = null;
+  function toLocalIST(iso) {
+    var t = new Date(iso).getTime();
+    if (!(t > 0)) return "";
+    return new Date(t + 5.5 * 3600000).toISOString().slice(0, 16);
+  }
+  function fromLocalIST(v) { return v ? v + ":00+05:30" : ""; }
+  function fillForm(s, canEdit) {
+    var f = $("setForm");
+    Array.prototype.forEach.call(f.elements, function (el) {
+      if (!el.name) return;
+      var v = s[el.name];
+      if (el.type === "checkbox") el.checked = !!v;
+      else if (el.type === "datetime-local") el.value = toLocalIST(v);
+      else el.value = v == null ? "" : v;
+      el.disabled = !canEdit;
+    });
+    $("setSave").disabled = !canEdit; $("setDefaults").disabled = !canEdit;
+    $("saveMsg").textContent = canEdit ? "Changes go live for everyone right after you save." : "View only. Only the owner can change settings.";
+  }
+  function offerPill(live) {
+    var p = $("offerPill"), f = $("setForm");
+    var on = f.offer_enabled.checked, st = new Date(fromLocalIST(f.offer_start.value)).getTime(), en = new Date(fromLocalIST(f.offer_end.value)).getTime(), now = Date.now();
+    var cls = "off", txt = "Off";
+    if (on && st > now) { cls = "sched"; txt = "Starts " + new Date(st).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); }
+    else if (on && en < now) { cls = "off"; txt = "Ended"; }
+    else if (on) { cls = "live"; txt = "Live now"; }
+    p.className = "pill " + cls; p.textContent = txt;
+  }
+  $("setForm").addEventListener("input", function () { offerPill(); });
+  $("setForm").addEventListener("change", function () { offerPill(); });
+  async function loadSettings() {
+    try {
+      var r = await api("/api/admin/settings");
+      SETS = r;
+      fillForm(r.settings, r.can_edit);
+      offerPill();
+      $("setMeta").textContent = r.meta && r.meta.updated_by ? "Last saved " + full(r.meta.updated_at) + " by " + r.meta.updated_by + "." : "Using default settings. Change anything below and save.";
+    } catch (e) { toast("Could not load settings: " + e.message, true); }
+  }
+  $("setDefaults").onclick = function () {
+    if (!SETS) return;
+    var d = SETS.defaults, f = $("setForm");
+    Array.prototype.forEach.call(f.elements, function (el) {
+      if (!el.name || el.type === "checkbox" || el.type === "datetime-local" || el.type === "number" || el.name === "sales_whatsapp") return;
+      el.value = d[el.name] == null ? "" : d[el.name];
+    });
+    $("saveMsg").textContent = "Default texts filled in. Press Save settings to make them live.";
+  };
+  $("setForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var f = this, body = {};
+    Array.prototype.forEach.call(f.elements, function (el) {
+      if (!el.name) return;
+      if (el.type === "checkbox") body[el.name] = el.checked;
+      else if (el.type === "datetime-local") body[el.name] = fromLocalIST(el.value);
+      else if (el.type === "number") body[el.name] = Number(el.value);
+      else body[el.name] = el.value;
+    });
+    var btn = $("setSave"); btn.disabled = true; btn.textContent = "Saving";
+    try {
+      var r = await api("/api/admin/settings", body);
+      SETS.settings = r.settings;
+      fillForm(r.settings, true); offerPill();
+      toast("Settings saved. Live for everyone now." + (r.live.offer_active ? " Offer is live." : " Offer is not live right now."));
+      $("setMeta").textContent = "Last saved just now.";
+    } catch (err) { toast(err.message, true); }
+    finally { btn.disabled = false; btn.textContent = "Save settings"; }
+  });
+
+  // ---------------- landing page banners ----------------
+  var BN = { b: null, def: null, canEdit: false, prev: null };
+  var BN_THEMES = [["night", "Night sky (purple, stars)"], ["green", "Green (brand)"], ["gold", "Gold (warm)"], ["light", "Light"], ["dark", "Dark"]];
+  function bnFill(t) { var s = (SETS && SETS.settings) || {}; return String(t || "").replace(/\{offer\}/g, s.offer_name || "Offer").replace(/\{percent\}/g, s.offer_percent || ""); }
+  function bnPreview() {
+    if (!window.GMPBanners) return;
+    var data = { interval: Number($("bnIv").value) || 5, items: BN.b.items.filter(function (x) { return x.on && x.title; }).map(function (x) {
+      return { theme: x.theme, kicker: bnFill(x.kicker), title: bnFill(x.title), text: bnFill(x.text), btn: bnFill(x.btn), link: x.link || "#", image: x.image };
+    }) };
+    if (!BN.prev) BN.prev = window.GMPBanners.mount($("bnPreview"), data); else BN.prev.update(data);
+    if (!data.items.length) $("bnPreview").innerHTML = '<p class="hint">No banners are on. The landing page shows no carousel.</p>';
+    $("bnPreview").hidden = false;
+  }
+  function bnRender() {
+    var b = BN.b, dis = BN.canEdit ? "" : " disabled";
+    $("bnOn").checked = !!b.enabled; $("bnIv").value = b.interval || 5;
+    $("bnOn").disabled = $("bnIv").disabled = $("bnAdd").disabled = $("bnSave").disabled = $("bnDefaults").disabled = !BN.canEdit;
+    $("bnList").innerHTML = b.items.map(function (x, i) {
+      return '<div class="bn-card' + (x.on ? "" : " off") + '" data-i="' + i + '">' +
+        '<div class="bn-head"><b>Banner ' + (i + 1) + '</b><label class="bn-sw"><input type="checkbox" data-k="on"' + (x.on ? " checked" : "") + dis + '>Show</label>' +
+        '<label class="bn-sw"><input type="checkbox" data-k="offer_only"' + (x.offer_only ? " checked" : "") + dis + '>Only while offer is live</label><span class="sp"></span>' +
+        '<button type="button" data-mv="-1"' + (i === 0 || !BN.canEdit ? " disabled" : "") + ' aria-label="Move up">Up</button><button type="button" data-mv="1"' + (i === b.items.length - 1 || !BN.canEdit ? " disabled" : "") + ' aria-label="Move down">Down</button><button type="button" class="del" data-del="1"' + dis + '>Delete</button></div>' +
+        '<div class="bn-img"><label>Banner image (covers the whole banner) <small>1200 x 600 px. Upload, or paste an https image link</small><input type="text" data-k="image" maxlength="500" value="' + esc(x.image || "") + '" placeholder="https://...jpg"' + dis + '></label>' +
+        (x.image ? '<img src="' + esc(x.image) + '" alt="">' : '<span></span>') +
+        '<span class="btn btn-g btn-sm bn-up">Upload image<input type="file" accept="image/png,image/jpeg,image/webp" data-up="1"' + dis + '></span></div>' +
+        '<label>Link when someone taps the banner <small>/signup.html, #process, /report.html or https://...</small><input type="text" data-k="link" maxlength="300" value="' + esc(x.link || "") + '" placeholder="/signup.html"' + dis + '></label>' +
+        '<label>Title <small>' + (x.image ? "not shown on image banners, used for Google and screen readers" : "big text on the banner") + '</small><input type="text" data-k="title" maxlength="90" value="' + esc(x.title || "") + '"' + dis + '></label>' +
+        '<details' + (x.image ? "" : " open") + '><summary style="cursor:pointer;font-weight:700;font-size:.84rem;color:var(--muted)">Text banner options (used only when there is no image)</summary><div style="display:grid;gap:10px;margin-top:10px">' +
+        '<div class="row2"><label>Color style<select data-k="theme"' + dis + '>' + BN_THEMES.map(function (t) { return '<option value="' + t[0] + '"' + (x.theme === t[0] ? " selected" : "") + '>' + t[1] + '</option>'; }).join("") + '</select></label>' +
+        '<label>Small heading <small>optional</small><input type="text" data-k="kicker" maxlength="40" value="' + esc(x.kicker || "") + '"' + dis + '></label></div>' +
+        '<label>Text <small>optional</small><input type="text" data-k="text" maxlength="160" value="' + esc(x.text || "") + '"' + dis + '></label>' +
+        '<label>Button text <small>optional, the whole banner is clickable anyway</small><input type="text" data-k="btn" maxlength="28" value="' + esc(x.btn || "") + '"' + dis + '></label>' +
+        '</div></details>' +
+        '</div>';
+    }).join("") || '<p class="hint">No banners yet. Press + Add banner.</p>';
+    var on = b.enabled && b.items.some(function (x) { return x.on; });
+    $("bnPill").className = "pill " + (on ? "live" : "off"); $("bnPill").textContent = on ? "Live on landing page" : "Off";
+    if (!BN.canEdit) $("bnMsg").textContent = "View only. Only the owner can change banners.";
+    bnPreview();
+  }
+  function bnRead() {
+    BN.b.enabled = $("bnOn").checked;
+    BN.b.interval = Number($("bnIv").value) || 5;
+    Array.prototype.forEach.call(document.querySelectorAll("#bnList .bn-card"), function (c) {
+      var x = BN.b.items[Number(c.getAttribute("data-i"))];
+      c.querySelectorAll("[data-k]").forEach(function (el) { var k = el.getAttribute("data-k"); x[k] = el.type === "checkbox" ? el.checked : el.value; });
+    });
+  }
+  function bnDirty() { $("bnMsg").textContent = "Not saved yet. Press Save banners to make it live."; }
+  $("bnList").addEventListener("change", function (e) { if (e.target.getAttribute && e.target.getAttribute("data-k") === "image") { bnRead(); bnRender(); } });
+  $("bnList").addEventListener("input", function (e) { if (e.target.type === "file") return; bnRead(); bnDirty(); bnPreview(); var c = e.target.closest(".bn-card"); if (c && e.target.getAttribute("data-k") === "on") c.classList.toggle("off", !e.target.checked); });
+  $("bnOn").addEventListener("change", function () { bnRead(); bnDirty(); });
+  $("bnIv").addEventListener("input", function () { bnRead(); bnDirty(); bnPreview(); });
+  $("bnList").addEventListener("click", function (e) {
+    var c = e.target.closest(".bn-card"); if (!c) return;
+    var i = Number(c.getAttribute("data-i"));
+    var mv = e.target.closest("[data-mv]");
+    if (mv) { bnRead(); var j = i + Number(mv.getAttribute("data-mv")); var t = BN.b.items[i]; BN.b.items[i] = BN.b.items[j]; BN.b.items[j] = t; bnRender(); bnDirty(); }
+    if (e.target.closest("[data-del]")) { if (!confirmDel(i)) return; bnRead(); BN.b.items.splice(i, 1); bnRender(); bnDirty(); }
+  });
+  function confirmDel(i) { var x = BN.b.items[i]; return !x.title || window.confirm("Delete banner " + (i + 1) + ' "' + x.title + '"?'); }
+  $("bnList").addEventListener("change", async function (e) {
+    var f = e.target.closest("[data-up]"); if (!f || !f.files || !f.files[0]) return;
+    var c = f.closest(".bn-card"), i = Number(c.getAttribute("data-i"));
+    var file = f.files[0];
+    if (file.size > 12 * 1024 * 1024) { toast("Image is too big. Use one under 12 MB.", true); return; }
+    $("bnMsg").textContent = "Uploading image...";
+    try {
+      var data = await bnShrink(file);
+      var r = await api("/api/admin/upload", { image: data });
+      bnRead(); BN.b.items[i].image = r.url; bnRender(); bnDirty();
+      toast("Image uploaded. Press Save banners to make it live.");
+    } catch (err) { toast(err.message, true); $("bnMsg").textContent = "Upload failed."; }
+  });
+  // make big photos small before upload (max 1600 px wide, JPEG)
+  function bnShrink(file) {
+    return new Promise(function (ok, bad) {
+      var rd = new FileReader();
+      rd.onerror = function () { bad(new Error("Could not read the image.")); };
+      rd.onload = function () {
+        var im = new Image();
+        im.onerror = function () { bad(new Error("This file is not an image.")); };
+        im.onload = function () {
+          var k = Math.min(1, 1600 / im.width), cv = document.createElement("canvas");
+          cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
+          cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+          ok(cv.toDataURL("image/jpeg", 0.86));
+        };
+        im.src = rd.result;
+      };
+      rd.readAsDataURL(file);
+    });
+  }
+  $("bnAdd").onclick = function () {
+    bnRead();
+    BN.b.items.push({ id: "b" + Date.now().toString(36), on: true, theme: "green", offer_only: false, kicker: "", title: "New banner title", text: "", btn: "Sign up", link: "/signup.html", image: "" });
+    bnRender(); bnDirty();
+    var last = document.querySelector("#bnList .bn-card:last-child [data-k=title]"); if (last) { last.focus(); last.select(); }
+  };
+  $("bnDefaults").onclick = function () { BN.b = clone(BN.def); BN.sc = clone(BN.scDef); bnRender(); scRender(); $("bnMsg").textContent = "Default banners filled in. Press Save banners to make them live."; };
+  $("bnSave").onclick = async function () {
+    bnRead(); scRead();
+    var bad = BN.b.items.filter(function (x) { return !String(x.title || "").trim(); }).length;
+    if (bad) { toast("Every banner needs a big title.", true); return; }
+    if (BN.sc.items.some(function (x) { return !x.image; })) { toast("Every landing page pin needs an image (or delete it).", true); return; }
+    var btn = this; btn.disabled = true; btn.textContent = "Saving";
+    try {
+      var r = await api("/api/admin/settings", { banners: BN.b, showcase: BN.sc });
+      BN.b = clone(r.settings.banners); bnRender();
+      BN.sc = clone(r.settings.showcase); scRender();
+      toast("Banners saved. Live on the landing page in about 30 seconds.");
+      $("bnMsg").textContent = "Saved.";
+    } catch (err) { toast(err.message, true); }
+    finally { btn.disabled = false; btn.textContent = "Save banners"; }
+  };
+  // landing page pins (right side animation)
+  function scRender() {
+    var dis = BN.canEdit ? "" : " disabled", L = BN.sc.items;
+    $("scAdd").disabled = !BN.canEdit;
+    $("scList").innerHTML = L.map(function (x, i) {
+      return '<div class="sc-card" data-i="' + i + '"><div class="ph">' + (x.image ? '<img src="' + esc(x.image) + '" alt="">' : "") +
+        '<span class="btn btn-g btn-sm bn-up">' + (x.image ? "Change image" : "Upload image") + '<input type="file" accept="image/png,image/jpeg,image/webp" data-scup="1"' + dis + '></span></div>' +
+        '<label>Pin title (typed in Draft card)<input type="text" data-k="title" maxlength="80" value="' + esc(x.title || "") + '"' + dis + '></label>' +
+        '<div class="row2"><label>Caption<input type="text" data-k="name" maxlength="30" value="' + esc(x.name || "") + '"' + dis + '></label>' +
+        '<label>Tag<input type="text" data-k="tag" maxlength="16" value="' + esc(x.tag || "") + '"' + dis + '></label></div>' +
+        '<label>Image link <small>or upload above</small><input type="text" data-k="image" maxlength="500" value="' + esc(x.image || "") + '"' + dis + '></label>' +
+        '<div class="row3"><button type="button" data-scmv="-1"' + (i === 0 || !BN.canEdit ? " disabled" : "") + '>Left</button><button type="button" data-scmv="1"' + (i === L.length - 1 || !BN.canEdit ? " disabled" : "") + '>Right</button><button type="button" class="del" data-scdel="1"' + (L.length <= 1 || !BN.canEdit ? " disabled" : "") + '>Delete</button></div></div>';
+    }).join("");
+  }
+  function scRead() {
+    Array.prototype.forEach.call(document.querySelectorAll("#scList .sc-card"), function (c) {
+      var x = BN.sc.items[Number(c.getAttribute("data-i"))];
+      c.querySelectorAll("[data-k]").forEach(function (el) { x[el.getAttribute("data-k")] = el.value; });
+    });
+  }
+  $("scList").addEventListener("input", function (e) { if (e.target.type !== "file") { scRead(); bnDirty(); } });
+  $("scList").addEventListener("change", async function (e) {
+    if (e.target.getAttribute("data-k") === "image") { scRead(); scRender(); return; }
+    var f = e.target.closest("[data-scup]"); if (!f || !f.files || !f.files[0]) return;
+    var i = Number(f.closest(".sc-card").getAttribute("data-i"));
+    $("bnMsg").textContent = "Uploading image...";
+    try {
+      var r = await api("/api/admin/upload", { image: await bnShrink(f.files[0]) });
+      scRead(); BN.sc.items[i].image = r.url; scRender(); bnDirty();
+      toast("Image uploaded. Press Save banners to make it live.");
+    } catch (err) { toast(err.message, true); $("bnMsg").textContent = "Upload failed."; }
+  });
+  $("scList").addEventListener("click", function (e) {
+    var c = e.target.closest(".sc-card"); if (!c) return;
+    var i = Number(c.getAttribute("data-i")), L = BN.sc.items;
+    var mv = e.target.closest("[data-scmv]");
+    if (mv) { scRead(); var j = i + Number(mv.getAttribute("data-scmv")); var t = L[i]; L[i] = L[j]; L[j] = t; scRender(); bnDirty(); }
+    if (e.target.closest("[data-scdel]") && window.confirm("Delete this pin from the landing page?")) { scRead(); L.splice(i, 1); scRender(); bnDirty(); }
+  });
+  $("scAdd").onclick = function () { scRead(); BN.sc.items.push({ image: "", title: "New pin title", name: "Caption", tag: "" }); scRender(); bnDirty(); };
+
+  async function loadBanners() {
+    try {
+      var r = await api("/api/admin/settings");
+      SETS = r;
+      BN.b = clone(r.settings.banners); BN.def = clone(r.defaults.banners); BN.canEdit = !!r.can_edit;
+      BN.sc = clone(r.settings.showcase); BN.scDef = clone(r.defaults.showcase);
+      bnRender(); scRender();
+    } catch (e) { toast("Could not load banners: " + e.message, true); }
+  }
+
+  // ---------------- plans + payments ----------------
+  var PL = { p: null, def: null, canEdit: false };
+  function rs(n) { return "Rs " + Math.round(Number(n) || 0).toLocaleString("en-IN"); }
+  function plRender() {
+    var p = PL.p, dis = PL.canEdit ? "" : " disabled";
+    $("plOn").checked = !!p.enabled; $("plOn").disabled = !PL.canEdit;
+    $("plHead").value = p.headline || ""; $("plNote").value = p.note || "";
+    $("plHead").disabled = $("plNote").disabled = !PL.canEdit;
+    $("plRows").innerHTML = p.items.map(function (it, i) {
+      var per = it.months > 1 ? rs(it.price / it.months) + " / month" : "";
+      return '<tr data-i="' + i + '"><td><input class="ck" type="checkbox" data-k="on"' + (it.on ? " checked" : "") + dis + '></td>' +
+        '<td><input type="text" data-k="name" maxlength="30" value="' + esc(it.name) + '"' + dis + '><div class="pl-per">' + it.months + ' month' + (it.months > 1 ? "s" : "") + '</div></td>' +
+        '<td><input type="number" data-k="price" min="1" value="' + it.price + '"' + dis + '><div class="pl-per">' + per + '</div></td>' +
+        '<td><input type="number" data-k="compare" min="0" value="' + (it.compare || 0) + '"' + dis + '></td>' +
+        '<td><input type="text" data-k="tag" maxlength="24" value="' + esc(it.tag || "") + '" placeholder="optional"' + dis + '></td>' +
+        '<td><input class="ck" type="checkbox" data-k="levels"' + (it.levels ? " checked" : "") + dis + '></td>' +
+        '<td><input class="ck" type="radio" name="plFeat" value="' + it.id + '"' + (p.featured === it.id ? " checked" : "") + dis + '></td><td></td></tr>';
+    }).join("");
+    $("lvRows").innerHTML = p.levels.map(function (l, i) {
+      return '<div class="lv-row" data-i="' + i + '"><label>Monthly views from<input type="number" data-k="views" min="1000" step="1000" value="' + l.views + '"' + dis + '></label>' +
+        '<label>Charge (Rs per month)<input type="number" data-k="charge" min="0" value="' + l.charge + '"' + dis + '></label>' +
+        '<button type="button" data-rm="' + i + '" aria-label="Remove level"' + dis + '>&times;</button></div>';
+    }).join("") || '<p class="hint">No levels. Plans will show without view level charges.</p>';
+    $("lvAdd").disabled = !PL.canEdit; $("plSave").disabled = !PL.canEdit; $("plDefaults").disabled = !PL.canEdit;
+    var on = p.enabled && p.items.some(function (x) { return x.on; });
+    $("plPill").className = "pill " + (on ? "live" : "off"); $("plPill").textContent = on ? "Live after Pinterest connect" : "Off";
+    if (!PL.canEdit) $("plMsg").textContent = "View only. Only the owner can change plans.";
+  }
+  function plRead() {
+    var p = PL.p;
+    p.enabled = $("plOn").checked;
+    p.headline = $("plHead").value; p.note = $("plNote").value;
+    Array.prototype.forEach.call(document.querySelectorAll("#plRows tr"), function (tr) {
+      var it = p.items[Number(tr.getAttribute("data-i"))];
+      tr.querySelectorAll("[data-k]").forEach(function (el) {
+        var k = el.getAttribute("data-k");
+        it[k] = el.type === "checkbox" ? el.checked : (el.type === "number" ? Number(el.value) : el.value);
+      });
+    });
+    var f = document.querySelector('input[name="plFeat"]:checked'); if (f) p.featured = f.value;
+    p.levels = Array.prototype.map.call(document.querySelectorAll("#lvRows .lv-row"), function (r) {
+      return { views: Number(r.querySelector('[data-k="views"]').value), charge: Number(r.querySelector('[data-k="charge"]').value) };
+    });
+  }
+  $("plForm").addEventListener("input", function () { $("plMsg").textContent = "Not saved yet. Press Save plans to make it live."; });
+  $("lvAdd").onclick = function () { plRead(); var last = PL.p.levels[PL.p.levels.length - 1]; PL.p.levels.push({ views: last ? last.views * 2 : 25000, charge: last ? last.charge : 999 }); plRender(); };
+  $("lvRows").addEventListener("click", function (e) { var b = e.target.closest("[data-rm]"); if (!b) return; plRead(); PL.p.levels.splice(Number(b.getAttribute("data-rm")), 1); plRender(); $("plMsg").textContent = "Not saved yet. Press Save plans to make it live."; });
+  $("plDefaults").onclick = function () { PL.p = clone(PL.def); plRender(); $("plMsg").textContent = "Default plans filled in. Press Save plans to make them live."; };
+  $("plForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    plRead();
+    var btn = $("plSave"); btn.disabled = true; btn.textContent = "Saving";
+    try {
+      var r = await api("/api/admin/settings", { plans: PL.p });
+      PL.p = clone(r.settings.plans); plRender();
+      toast("Plans saved. Live for everyone who connects Pinterest.");
+      $("plMsg").textContent = "Saved.";
+    } catch (err) { toast(err.message, true); }
+    finally { btn.disabled = false; btn.textContent = "Save plans"; }
+  });
+  async function loadPlans() {
+    try {
+      var r = await api("/api/admin/settings");
+      SETS = r;
+      PL.p = clone(r.settings.plans); PL.def = clone(r.defaults.plans); PL.canEdit = !!r.can_edit;
+      plRender();
+    } catch (e) { toast("Could not load plans: " + e.message, true); }
+    loadPayments();
+  }
+  async function loadPayments() {
+    try {
+      var r = await api("/api/admin/payments");
+      var st = [];
+      st.push(r.ready ? '<span class="pill live">Razorpay keys added</span>' : '<span class="pill off">Razorpay keys missing in Vercel</span>');
+      if (r.ready) st.push(r.test_mode ? '<span class="pill sched">TEST mode</span>' : '<span class="pill live">LIVE mode</span>');
+      if (r.missing_sql) st.push('<span class="pill sched">Run v1.4 of supabase.sql</span>');
+      $("rzpState").innerHTML = st.join("");
+      var pays = r.payments || [];
+      var live = pays.filter(function (x) { return x.status === "paid" && !x.test_mode; });
+      var testPaid = pays.filter(function (x) { return x.status === "paid" && x.test_mode; }).length;
+      $("pkRev").textContent = rs(live.reduce(function (a, x) { return a + x.amount / 100; }, 0));
+      $("pkPaid").textContent = live.length;
+      $("pkPaidS").textContent = testPaid ? "+ " + testPaid + " test" : "live mode";
+      $("pkActive").textContent = (r.active || []).length;
+      var paidUsers = {}; pays.forEach(function (x) { if (x.status === "paid") paidUsers[x.user_id] = 1; });
+      var open = {}; pays.forEach(function (x) { if (x.status === "created" && !paidUsers[x.user_id]) open[x.user_id] = 1; });
+      $("pkOpen").textContent = Object.keys(open).length;
+      $("payBody").innerHTML = pays.length ? pays.map(function (x) {
+        var wa = x.phone ? '<a class="plat" target="_blank" rel="noopener" href="https://wa.me/' + String(x.phone).replace(/\D/g, "") + '">WhatsApp</a>' : "";
+        return '<tr><td>' + esc(full(x.paid_at || x.created_at)) + '</td>' +
+          '<td><div class="nm">' + esc(x.name || "-") + '</div><div class="em">' + esc(x.email || "") + '</div>' + wa + '</td>' +
+          '<td>' + esc(x.plan_name || x.plan_id) + '</td><td><b>' + rs(x.amount / 100) + '</b></td>' +
+          '<td><span class="badge b-' + (x.status === "paid" ? "paid" : "created") + '">' + (x.status === "paid" ? "Paid" : "Opened, not paid") + '</span>' + (x.test_mode ? ' <span class="badge b-test">test</span>' : "") + '</td>' +
+          '<td>' + esc(x.method || "") + '</td><td>' + esc(x.period_end ? new Date(x.period_end).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "") + '</td>' +
+          '<td class="em">' + esc(x.razorpay_payment_id || x.razorpay_order_id) + '</td></tr>';
+      }).join("") : '<tr><td colspan="8" class="sub">No payments yet.' + (r.missing_sql ? " Run the v1.4 part of supabase.sql first." : "") + '</td></tr>';
+    } catch (e) { $("payBody").innerHTML = '<tr><td colspan="8" class="sub">' + esc(e.message) + '</td></tr>'; }
+  }
+
+  // ---------------- growth graph ----------------
+  // One graph per niche: Pinterest views in month 1 to 6 for an account starting at zero.
+  var GRS = { g: null, def: null, canEdit: false, widget: null, dirty: false };
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function grNum(n) { return Math.round(Number(n) || 0).toLocaleString("en-IN"); }
+  function grDirty() { GRS.dirty = true; $("grMsg").textContent = "Not saved yet. Press Save growth graph to make it live."; grPreview(); }
+
+  async function loadGrowth() {
+    if (GRS.g && GRS.dirty) return;
+    try {
+      var r = await api("/api/admin/settings");
+      SETS = r;
+      GRS.g = clone(r.settings.growth);
+      GRS.def = clone(r.defaults.growth);
+      GRS.canEdit = !!r.can_edit;
+      $("grMeta").textContent = r.meta && r.meta.updated_by ? "Last saved " + full(r.meta.updated_at) + " by " + r.meta.updated_by + "." : "Using default numbers. Type your real results and save.";
+      grRenderAll();
+      if (!GRS.canEdit) { $("grMsg").textContent = "View only. Only the owner can change the growth graph."; }
+    } catch (e) { toast("Could not load the growth graph: " + e.message, true); }
+  }
+  function grRenderAll() { grTable(); $("grPat").value = String(GRS.g.patience || 2); grPreviewSetup(); grLock(); }
+  function grLock() {
+    var dis = !GRS.canEdit;
+    Array.prototype.forEach.call($("pane-growth").querySelectorAll("input, button, select"), function (el) {
+      if (el.closest(".gr-prev")) return;
+      el.disabled = dis;
+    });
+  }
+  function grTable() {
+    var h = '<thead><tr><th>Niche</th>';
+    for (var m = 1; m <= 6; m++) h += '<th>Month ' + m + '</th>';
+    h += '<th>6 month total</th><th></th></tr></thead><tbody>';
+    h += GRS.g.niches.map(function (n, i) {
+      var tot = n.views.reduce(function (s, v) { return s + (Number(v) || 0); }, 0);
+      return '<tr><td><b>' + esc(n.name) + '</b></td>' +
+        n.views.map(function (v, m) { return '<td><input type="number" min="0" step="100" data-n="' + i + '" data-m="' + m + '" value="' + v + '" aria-label="' + esc(n.name) + ' month ' + (m + 1) + ' views"></td>'; }).join("") +
+        '<td class="tot" data-tot="' + i + '">' + grNum(tot) + '</td>' +
+        '<td>' + (n.name === "Other" ? "" : '<button class="btn btn-g btn-sm" type="button" data-del="' + i + '">Remove</button>') + '</td></tr>';
+    }).join("");
+    $("grTbl").innerHTML = h + '</tbody>';
+    if (!GRS.canEdit) grLock();
+  }
+  $("grTbl").addEventListener("input", function (e) {
+    var t = e.target, n = t.getAttribute("data-n"), m = t.getAttribute("data-m");
+    if (n === null || m === null) return;
+    var row = GRS.g.niches[Number(n)];
+    row.views[Number(m)] = Math.max(0, Math.min(1e9, Math.round(Number(t.value) || 0)));
+    var cell = $("grTbl").querySelector('[data-tot="' + n + '"]');
+    if (cell) cell.textContent = grNum(row.views.reduce(function (s, v) { return s + v; }, 0));
+    grDirty();
+  });
+  $("grTbl").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-del]"); if (!b) return;
+    var i = Number(b.getAttribute("data-del")), n = GRS.g.niches[i];
+    if (!n || n.name === "Other") return;
+    if (!confirm("Remove the niche " + n.name + "? Sellers who picked it will see the Other numbers.")) return;
+    GRS.g.niches.splice(i, 1);
+    grTable(); grPreviewSetup(); grDirty();
+  });
+  $("grAddNiche").onclick = function () {
+    var name = $("grNewNiche").value.replace(/[^A-Za-z0-9 &+'\/-]/g, "").replace(/\s+/g, " ").trim().slice(0, 30);
+    if (!name) { toast("Type a niche name first.", true); return; }
+    if (GRS.g.niches.some(function (n) { return n.name.toLowerCase() === name.toLowerCase(); })) { toast(name + " is already in the list.", true); return; }
+    if (GRS.g.niches.length >= 24) { toast("You can have up to 24 niches.", true); return; }
+    var other = GRS.g.niches.filter(function (n) { return n.name === "Other"; })[0];
+    var at = GRS.g.niches.indexOf(other);
+    GRS.g.niches.splice(at < 0 ? GRS.g.niches.length : at, 0, { name: name, views: clone(other ? other.views : [0, 0, 0, 0, 0, 0]) });
+    $("grNewNiche").value = "";
+    grTable(); grPreviewSetup(); $("pvNiche").value = name; grDirty();
+  };
+  $("grPat").onchange = function () { GRS.g.patience = Number(this.value) || 2; grDirty(); };
+
+  // preview
+  function grPreviewSetup() {
+    var pv = $("pvNiche"), keep = pv.value;
+    pv.innerHTML = GRS.g.niches.map(function (n) { return '<option>' + esc(n.name) + '</option>'; }).join("");
+    if (keep && GRS.g.niches.some(function (n) { return n.name === keep; })) pv.value = keep;
+    grPreview();
+  }
+  var pvT = null;
+  function grPreview() {
+    clearTimeout(pvT);
+    pvT = setTimeout(function () {
+      if (!window.GMPGrowth || !GRS.g) return;
+      window.GMPGrowth.setConfig(clone(GRS.g));
+      var inp = { niche: $("pvNiche").value, current: Number($("pvCur").value) || 0 };
+      if (!GRS.widget) GRS.widget = window.GMPGrowth.mount($("pvBox"), inp, {});
+      else GRS.widget.update(inp);
+    }, 250);
+  }
+  ["pvNiche", "pvCur"].forEach(function (id) { $(id).addEventListener("input", grPreview); });
+
+  $("grReset").onclick = function () {
+    if (!confirm("Put back the default numbers? Your typed numbers are replaced (nothing is live until you save).")) return;
+    GRS.g = clone(GRS.def);
+    grRenderAll(); grDirty();
+  };
+  $("grSave").onclick = async function () {
+    var btn = this; btn.disabled = true; btn.textContent = "Saving";
+    try {
+      var r = await api("/api/admin/settings", { growth: GRS.g });
+      GRS.g = clone(r.settings.growth); GRS.dirty = false;
+      grRenderAll();
+      $("grMsg").textContent = "Saved. Every user's graph uses these numbers now.";
+      $("grMeta").textContent = "Last saved just now.";
+      toast("Growth graph saved. Live for everyone now.");
+    } catch (err) { toast(err.message, true); }
+    finally { btn.disabled = !GRS.canEdit; btn.textContent = "Save growth graph"; }
+  };
+  window.addEventListener("beforeunload", function (e) { if (GRS.dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+  // ---------------- admins ----------------
+  async function loadAdmins() {
+    try {
+      var r = await api("/api/admin/admins");
+      var h = '<div class="adm-row"><div><b>' + esc(r.owner || "(SUPER_ADMIN_EMAIL not set in Vercel)") + '</b><span class="muted">Owner, set in Vercel. Full access.</span></div><span class="badge b-submitted">Owner</span></div>';
+      h += (r.admins || []).map(function (a) {
+        return '<div class="adm-row"><div><b>' + esc(a.email) + '</b><span class="muted">' + esc(a.note || "Admin") + ', added ' + esc(when(a.created_at)) + '</span></div><button class="btn btn-g btn-sm" type="button" data-rm="' + esc(a.email) + '">Remove</button></div>';
+      }).join("");
+      if (!(r.admins || []).length) h += '<p class="empty">No other admins yet.</p>';
+      $("admList").innerHTML = h;
+    } catch (e) { toast("Could not load admins: " + e.message, true); }
+  }
+  $("admList").addEventListener("click", async function (e) {
+    var b = e.target.closest("[data-rm]"); if (!b) return;
+    var em = b.getAttribute("data-rm");
+    if (!confirm("Remove " + em + " from admins? They keep their normal account.")) return;
+    try { await api("/api/admin/admins", { action: "remove", email: em }); toast(em + " is no longer an admin."); loadAdmins(); }
+    catch (err) { toast(err.message, true); }
+  });
+  $("aAdd").onclick = async function () {
+    $("aErr").textContent = "";
+    var btn = this; btn.disabled = true; btn.textContent = "Adding";
+    try {
+      var r = await api("/api/admin/admins", { action: "add", email: $("aEmail").value.trim(), note: $("aNote").value.trim(), password: $("aPass").value });
+      toast(r.added + " is now an admin." + (r.login === "created" ? " Login created with the password you set." : (r.login === "existing" ? " They log in with their existing password." : " They need a GrowMyPin login to open /admin.")));
+      $("aEmail").value = ""; $("aNote").value = ""; $("aPass").value = "";
+      loadAdmins();
+    } catch (err) { $("aErr").textContent = err.message; }
+    finally { btn.disabled = false; btn.textContent = "Add admin"; }
+  };
+
+  // ---------------- misc ----------------
+  $("range").onchange = function () { S.days = Number(this.value); load(); };
+  $("modeSeg").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-mode]"); if (!b) return;
+    S.mode = b.getAttribute("data-mode");
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) { x.classList.toggle("on", x === b); });
+    load();
+  });
+  $("refresh").onclick = load;
+  $("logout").onclick = async function () { try { await fetch("/api/user/logout", { method: "POST", credentials: "same-origin" }); } catch (e) {} location.href = "/"; };
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeComposer(); closeDrawer(); } });
+  setInterval(function () { if (document.visibilityState === "visible" && !$("composer").classList.contains("on")) load(); }, 120000);
+  load().then(function () {
+    var startTab = (location.hash || "").replace("#", "");
+    if (startTab === "settings" || startTab === "growth" || startTab === "plans" || startTab === "banners" || (startTab === "admins" && S.isSuper)) showTab(startTab);
+  });
+})();
+</script>
+</body>
+</html>
